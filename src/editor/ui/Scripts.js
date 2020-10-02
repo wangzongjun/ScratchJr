@@ -49,25 +49,24 @@ export default class Scripts {
         if (ScratchJr.onHold) {
             return;
         }
-        let target;  
         if (window.event) {
-            target = window.event.srcElement;
+            t = window.event.srcElement;
         } else {
-            target = e.target;
+            t = e.target;
         }
-        if ((target.nodeName == 'H3') && (target.owner == ScratchJr.activeFocus)) {
+        if ((t.nodeName == 'H3') && (t.owner == ScratchJr.activeFocus)) {
             return;
         } // editing the current field
         ScratchJr.clearSelection();
-        if (target.nodeName == 'H3') {
+        if (t.nodeName == 'H3') {
             ScratchJr.blur();
-            ScratchJr.editArg(e, target);
+            ScratchJr.editArg(e, t);
             return;
         }
 
-        if (target.firstChild && target.firstChild.nodeName == 'H3') {
+        if (t.firstChild && t.firstChild.nodeName == 'H3') {
             ScratchJr.blur();
-            ScratchJr.editArg(e, target.firstChild);
+            ScratchJr.editArg(e, t.firstChild);
             return;
         }
 
@@ -89,12 +88,12 @@ export default class Scripts {
             if (!hit3DRect(ths, pt)) {
                 continue;
             }
-        
-            //    var t = new WebKitCSSMatrix(window.getComputedStyle(ths).webkitTransform);
+            var t = new WebKitCSSMatrix(window.getComputedStyle(ths).webkitTransform);
             // This line was causing repeat blocks to only drag when touched in the front and top
             // It seems to have been checking if the drag was on the invisible shadow of the repeat block
             // It's not clear to me why we would want this, and seems functional without it. -- TM
             //if ((ths.owner.blocktype == "repeat") && !hitTest(ths.childNodes[1], pixel)) continue;
+            e.preventDefault();
             Events.startDrag(e, ths, ScriptsPane.prepareToDrag,
                 ScriptsPane.dropBlock, ScriptsPane.draggingBlock, ScriptsPane.runBlock);
             return;

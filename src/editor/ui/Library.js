@@ -1,8 +1,8 @@
 
 import ScratchJr from '../ScratchJr';
-import iOS from '../../iPad/iOS';
-import IO from '../../iPad/IO';
-import MediaLib from '../../iPad/MediaLib';
+import OS from '../../tablet/OS';
+import IO from '../../tablet/IO';
+import MediaLib from '../../tablet/MediaLib';
 import Paint from '../../painteditor/Paint';
 import Events from '../../utils/Events';
 import Localization from '../../utils/Localization';
@@ -407,12 +407,12 @@ export default class Library {
             // (this is possible if we receive a duplicate project, for example)
             Library.assetThumbnailUnique(data.altmd5, type, function (isUnique) {
                 if (isUnique) {
-                    iOS.remove(data.altmd5, iOS.trace);
+                    OS.remove(data.altmd5, OS.trace);
                 }
             });
         }
 
-        IO.deleteobject(key, data.id, iOS.trace);
+        IO.deleteobject(key, data.id, OS.trace);
     }
 
     static parseAssetData (data) {
@@ -526,7 +526,7 @@ export default class Library {
             if (!(selectedOne in MediaLib.keys)) {
                 analyticsName = 'user_asset';
             }
-            iOS.analyticsEvent('editor', 'new_character', analyticsName);
+            OS.analyticsEvent('editor', 'new_character', analyticsName);
         }
         Library.close(e);
     }
@@ -543,7 +543,7 @@ export default class Library {
             if (!(selectedOne in MediaLib.keys)) {
                 analyticsName = 'user_background';
             }
-            iOS.analyticsEvent('editor', 'choose_background', analyticsName);
+            OS.analyticsEvent('editor', 'choose_background', analyticsName);
         }
         Library.close(e);
     }

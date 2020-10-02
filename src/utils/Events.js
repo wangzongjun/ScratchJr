@@ -212,8 +212,8 @@ export default class Events {
 
     static clearEvents () {
         if (isTablet) { // clearEvents
-            window.onmousemove = undefined;
-            window.onmouseup = undefined;
+            window.ontouchmove = undefined;
+            window.ontouchend = undefined;
         } else {
             window.onmousemove = function (e) {
                 e.preventDefault();
