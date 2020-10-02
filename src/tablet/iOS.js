@@ -1,80 +1,80 @@
-import {
-    isiOS,
-    gn
-} from '../utils/lib';
-import IO from './IO';
-import Lobby from '../lobby/Lobby';
-import Alert from '../editor/ui/Alert';
-import ScratchAudio from '../utils/ScratchAudio';
-import Web from './Web';
-import WebUtils from './WebUtils';
-
 //////////////////////////////////////////////////
-//  Tablet interface functions
+//  iOS interface functions
+// window.tablet is the class where native functions are injected for calling in
+// javascript. It will be initialized prior to calling any functions in this class
 //////////////////////////////////////////////////
 
-// This file and object are named "iOS" for legacy reasons.
-// But, it is also used for the AndroidInterface. All function calls here
-// are mapped to Android/iOS native calls.
+import OS from './OS';
+import '@babel/polyfill';
 
-let path;
-let camera;
-let database = 'projects';
 let mediacounter = 0;
-let tabletInterface = null;
+let callbacks = {};
 
 export default class iOS {
-    // Getters/setters for properties used in other classes
-    static get path() {
-        return path;
-    }
-
-    static set path(newPath) {
-        path = newPath;
-    }
-
-    static get camera() {
-        return camera;
-    }
-
-    static get database() {
-        return database;
-    }
-
     static init(){
-        if (WebUtils.isWeb()) {
-            tabletInterface = Web;
-            Web.init();
-            if (fcn) {
-                fcn();
+
+    }
+    
+    static getId () {
+        do { //eslint-disable-line no-constant-condition
+            var id = 'jr' + ((new Date()).getTime()) + Math.floor(Math.random() * 10000);
+            if (!callbacks[id]) {
+                return id;
             }
+        } while (true);
+    }
+
+    static call (method) {
+        return new Promise((resolve) => {
+            var id = iOS.getId();
+            callbacks[id] = resolve;
+            var args = [].slice.call(arguments);
+            args.shift();
+            window.tablet.postMessage({
+                id: id,
+                method: method,
+                params: args
+            });
+        });
+    }
+
+    static resolve (id, res) {
+        if (!id) {
+            return;
         }
+        const callbackFn = callbacks[id];
+        if (!callbackFn) {
+            return;
+        }
+        if (typeof callbackFn === 'function') {
+            callbackFn(res);
+        }
+        delete callbacks[id];
     }
 
     // Database functions
-    static stmt(json, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.database_stmt(JSON.stringify(json), fcn);
-        } else {
-            var result = tabletInterface.database_stmt(JSON.stringify(json));
+    static stmt (json, fcn) {
+        (async () => {
+            var result = await iOS.call('database_stmt', JSON.stringify(json));
             if (typeof (fcn) !== 'undefined') {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static query(json, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.database_query(JSON.stringify(json), fcn);
-        } else {
-            var result = tabletInterface.database_query(JSON.stringify(json));
+    static query (json, fcn) {
+        (async () => {
+            var result = await iOS.call('database_query', JSON.stringify(json));
+            if (typeof result == 'object') {
+                result = JSON.stringify(result);
+            }
             if (typeof (fcn) !== 'undefined') {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static setfield(db, id, fieldname, val, fcn) {
+    static setfield (db, id, fieldname, val, fcn) {
         var json = {};
         var keylist = [fieldname + ' = ?', 'mtime = ?'];
         json.values = [val, (new Date()).getTime().toString()];
@@ -83,42 +83,33 @@ export default class iOS {
     }
 
     // IO functions
-    static cleanassets(ft, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_cleanassets(ft, fcn);
-        } else {
-            tabletInterface.io_cleanassets(ft);
-            fcn();
-        }
+
+    static cleanassets (ft, fcn) {
+        iOS.call('io_cleanassets', ft);
+        fcn();
     }
 
-    static getmedia(file, fcn) {
+    static getmedia (file, fcn) {
         mediacounter++;
         var nextStep = function (file, key, whenDone) {
-            if (WebUtils.isWeb()) {
-                tabletInterface.io_getmedialen(file, key, function (result) {
-                    iOS.processdata(key, 0, result, '', whenDone);
-                });
-            } else {
-                var result = tabletInterface.io_getmedialen(file, key);
-                iOS.processdata(key, 0, result, '', whenDone);
-            }
+            (async () => {
+                var result = await iOS.call('io_getmedialen', file, key);
+                iOS.processdata(key, 0, result * 1, '', whenDone);
+            })();
         };
         nextStep(file, mediacounter, fcn);
     }
 
-    static getmediadata(key, offset, len, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_getmediadata(key, offset, len, fcn);
-        } else {
-            var result = tabletInterface.io_getmediadata(key, offset, len);
+    static getmediadata (key, offset, len, fcn) {
+        (async () => {
+            var result = await iOS.call('io_getmediadata', key, offset, len);
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static processdata(key, off, len, oldstr, fcn) {
+    static processdata (key, off, len, oldstr, fcn) {
         if (len == 0) {
             iOS.getmediadone(key);
             fcn(oldstr);
@@ -130,245 +121,237 @@ export default class iOS {
         });
     }
 
-    static getsettings(fcn) {
-        var result = tabletInterface.io_getsettings();
-        if (fcn) {
-            fcn(result);
-        }
-    }
-
-    static getmediadone(file, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_getmediadone(file, fcn);
-        } else {
-            var result = tabletInterface.io_getmediadone(file);
+    static getsettings (fcn) {
+        (async () => {
+            var result = await iOS.call('io_getsettings');
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static setmedia(str, ext, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_setmedia(str, ext, fcn);
-        } else {
-            var result = tabletInterface.io_setmedia(str, ext);
+    static getmediadone (file, fcn) {
+        (async () => {
+            var result = await iOS.call('io_getmediadone', file);
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static setmedianame(str, name, ext, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_setmedianame(str, name, ext, fcn);
-        } else {
-            var result = tabletInterface.io_setmedianame(str, name, ext);
+    static setmedia (str, ext, fcn) {
+        (async () => {
+            var result = await iOS.call('io_setmedia', str, ext);
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static getmd5(str, fcn) {
-        var result = tabletInterface.io_getmd5(str);
-        if (fcn) {
-            fcn(result);
-        }
-    }
-
-    static remove(str, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_remove(str, fcn);
-        } else {
-            var result = tabletInterface.io_remove(str);
+    static setmedianame (str, name, ext, fcn) {
+        (async () => {
+            var result = await iOS.call('io_setmedianame', str, name, ext);
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static getfile(str, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_getfile(str, fcn);
-        } else {
-            var result = tabletInterface.io_getfile(str);
+    static getmd5 (str, fcn) {
+        (async () => {
+            var result = await iOS.call('io_getmd5', str);
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static setfile(name, str, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_setfile(name, btoa(str), fcn);
-        } else {
-            var result = tabletInterface.io_setfile(name, btoa(str));
+    static remove (str, fcn) {
+        (async () => {
+            var result = await iOS.call('io_remove', str);
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
+    }
+
+    static getfile (str, fcn) {
+        (async () => {
+            var result = await iOS.call('io_getfile', str);
+            if (fcn) {
+                fcn(result);
+            }
+        })();
+    }
+
+    static setfile (name, str, fcn) {
+        (async () => {
+            var result = await iOS.call('io_setfile', name, btoa(str));
+            if (fcn) {
+                fcn(result);
+            }
+        })();
     }
 
     // Sound functions
-    static registerSound(dir, name, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.io_registersound(dir, name, fcn);
-        } else {
-            var result = tabletInterface.io_registersound(dir, name);
+
+    static registerSound (dir, name, fcn) {
+        (async () => {
+            var result = await iOS.call('io_registersound', dir, name);
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static playSound(name, fcn) {
-        var result = tabletInterface.io_playsound(name);
-        if (fcn) {
-            fcn(result);
-        }
+    static playSound (name, fcn) {
+        (async () => {
+            var result = await iOS.call('io_playsound', name);
+            if (fcn) {
+                fcn(result);
+            }
+        })();
     }
 
-    static stopSound(name, fcn) {
-        var result = tabletInterface.io_stopsound(name);
-        if (fcn) {
-            fcn(result);
-        }
+    static stopSound (name, fcn) {
+        (async () => {
+            var result = await iOS.call('io_stopsound', name);
+            if (fcn) {
+                fcn(result);
+            }
+        })();
     }
 
     // Web Wiew delegate call backs
-    static soundDone(name) { //IO.m 306  + (void)soundEnded:(NSTimer*)timer 
-        ScratchAudio.soundDone(name);
-    }
 
-    static sndrecord(fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.recordsound_recordstart(fcn);
-        } else {
-            var result = tabletInterface.recordsound_recordstart();
+    static sndrecord (fcn) {
+        (async () => {
+            var result = await iOS.call('recordsound_recordstart');
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static recordstop(fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.recordsound_recordstop(fcn);
-        } else {
-            var result = tabletInterface.recordsound_recordstop();
+    static recordstop (fcn) {
+        (async () => {
+            var result = await iOS.call('recordsound_recordstop');
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static volume(fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.recordsound_volume(fcn);
-        } else {
-            var result = tabletInterface.recordsound_volume();
+    static volume (fcn) {
+        (async () => {
+            var result = await iOS.call('recordsound_volume');
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static startplay(fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.recordsound_startplay(fcn);
-        } else {
-            var result = tabletInterface.recordsound_startplay();
+    static startplay (fcn) {
+        (async () => {
+            var result = await iOS.call('recordsound_startplay');
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static stopplay(fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.recordsound_stopplay(fcn);
-        } else {
-            var result = tabletInterface.recordsound_stopplay();
+    static stopplay (fcn) {
+        (async () => {
+            var result = await iOS.call('recordsound_stopplay');
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
-    static recorddisappear(b, fcn) {
-        if (WebUtils.isWeb()) {
-            tabletInterface.recordsound_recordclose(b,fcn);
-        } else {
-            var result = tabletInterface.recordsound_recordclose(b);
+    static recorddisappear (b, fcn) {
+        (async () => {
+            var result = iOS.call('recordsound_recordclose', b);
             if (fcn) {
                 fcn(result);
             }
-        }
+        })();
     }
 
     // Record state
-    static askpermission() {
-        tabletInterface.askForPermission();
+    static askpermission () {
+        iOS.call('askForPermission');
     }
 
     // camera functions
-    static hascamera() {
-        camera = tabletInterface.scratchjr_cameracheck();
+
+    static hascamera () {
+        (async () => {
+            OS.camera = await iOS.call('scratchjr_cameracheck');
+        })();
     }
 
-    static startfeed(data, fcn) {
-        var str = JSON.stringify(data);
-        var result = tabletInterface.scratchjr_startfeed(str);
-        if (fcn) {
-            fcn(result);
-        }
+    static startfeed (data, fcn) {
+        (async () => {
+            var str = JSON.stringify(data);
+            var result = await iOS.call('scratchjr_startfeed', str);
+            if (fcn) {
+                fcn(result);
+            }
+        })();
     }
 
-    static stopfeed(fcn) {
-        var result = tabletInterface.scratchjr_stopfeed();
-        if (fcn) {
-            fcn(result);
-        }
+    static stopfeed (fcn) {
+        (async () => {
+            var result = await iOS.call('scratchjr_stopfeed');
+            if (fcn) {
+                fcn(result);
+            }
+        })();
     }
 
-    static choosecamera(mode, fcn) {
-        var result = tabletInterface.scratchjr_choosecamera(mode);
-        if (fcn) {
-            fcn(result);
-        }
+    static choosecamera (mode, fcn) {
+        (async () => {
+            var result = await iOS.call('scratchjr_choosecamera', mode);
+            if (fcn) {
+                fcn(result);
+            }
+        })();
     }
 
-    static captureimage(fcn) {
-        tabletInterface.scratchjr_captureimage(fcn);
+    static captureimage (fcn) {
+        iOS.call('scratchjr_captureimage', fcn);
     }
 
-    static hidesplash(fcn) {
-        if (isiOS) {
-            tabletInterface.hideSplash();
-        }
-        if (fcn) {
-            fcn();
-        }
+    static hidesplash (fcn) {
+        (async () => {
+            iOS.call('hideSplash');
+            if (fcn) {
+                fcn();
+            }
+        })();
     }
 
-    static trace(str) {
-        WebUtils.log(str); // eslint-disable-line no-console
+    static trace (str) {
+        console.log(str); // eslint-disable-line no-console
     }
 
-    static parse(str) {
-        WebUtils.log(JSON.parse(str)); // eslint-disable-line no-console
+    static parse (str) {
+        console.log(JSON.parse(str)); // eslint-disable-line no-console
     }
 
-    static tracemedia(str) {
-        WebUtils.log(atob(str)); // eslint-disable-line no-console
+    static tracemedia (str) {
+        console.log(atob(str)); // eslint-disable-line no-console
     }
 
-    ignore() {}
+    ignore () {
+    }
 
     ///////////////
     // Sharing
     ///////////////
+
+
     // Called on the JS side to trigger native UI for project sharing.
     // fileName: name for the file to share
     // emailSubject: subject text to use for an email
@@ -376,46 +359,28 @@ export default class iOS {
     // shareType: 0 for Email; 1 for Airdrop
     // b64data: base-64 encoded .SJR file to share
 
-    static sendSjrToShareDialog(fileName, emailSubject, emailBody, shareType, b64data) {
-        tabletInterface.sendSjrUsingShareDialog(fileName, emailSubject, emailBody, shareType, b64data);
-    }
-
-    // Called on the Objective-C side.  The argument is a base64-encoded .SJR file,
-    // to be unzipped, processed, and stored.
-    static loadProjectFromSjr(b64data) {
-        try {
-            IO.loadProjectFromSjr(b64data);
-        } catch (err) {
-            var errorMessage = 'Couldn\'t load share -- project data corrupted. ' + err.message;
-            Alert.open(gn('frame'), gn('frame'), errorMessage, '#ff0000');
-            WebUtils.log(err); // eslint-disable-line no-console
-            return 0;
-        }
-        return 1;
+    static sendSjrToShareDialog (fileName, emailSubject, emailBody, shareType, b64data) {
+        iOS.call('sendSjrUsingShareDialog', fileName, emailSubject, emailBody, shareType, b64data);
     }
 
     // Name of the device/iPad to display on the sharing dialog page
     // fcn is called with the device name as an arg
-    static deviceName(fcn) {
-        fcn(tabletInterface.deviceName());
+    static deviceName (fcn) {
+        (async () => {
+            fcn(await iOS.call('deviceName'));
+        })();
     }
 
-    static analyticsEvent(category, action, label) {
-        tabletInterface.analyticsEvent(category, action, label);
+    static analyticsEvent (category, action, label) {
+        iOS.call('analyticsEvent', category, action, label);
     }
 
-    static setAnalyticsPlacePref(preferredPlace) {
-        tabletInterface.setAnalyticsPlacePref(preferredPlace);
+    static setAnalyticsPlacePref (preferredPlace) {
+        iOS.call('setAnalyticsPlacePref', preferredPlace);
     }
 
-    // Web Wiew delegate call backs
-    static pageError(desc) { //ViewController.m 168 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
-        console.log('XCODE ERROR:', desc); // eslint-disable-line no-console
-        if (window.location.href.indexOf('home.html') > -1) {
-            if (Lobby.errorTimer) {
-                Lobby.errorLoading(desc);
-            }
-        }
+    static setAnalyticsPref (key, value) {
+        iOS.call('setAnalyticsPref', key, value);
     }
 }
 

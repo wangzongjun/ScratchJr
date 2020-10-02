@@ -2,6 +2,7 @@ import {isiOS, isAndroid, gn} from '../utils/lib';
 import IO from './IO';
 import iOS from './iOS';
 import Android from './Android';
+import WebOS from './WebOS';
 import Lobby from '../lobby/Lobby';
 import Alert from '../editor/ui/Alert';
 import ScratchAudio from '../utils/ScratchAudio';
@@ -51,7 +52,7 @@ export default class OS {
             }, 100);
         }
 
-        tabletInterface = iOS;
+        tabletInterface = WebOS;
         tabletInterface.init();
         if (fcn) {
             fcn();
@@ -188,10 +189,8 @@ export default class OS {
         tabletInterface.captureimage(fcn);
     }
 
-    static hidesplash (fcn) {
-        if (isiOS) {
-            iOS.hidesplash();
-        }
+    static hidesplash(fcn) {
+        tabletInterface.hidesplash();
         if (fcn) {
             fcn();
         }
