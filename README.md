@@ -1,101 +1,29 @@
-## Overview
-This is the official git repository hosting the source code for the
-[ScratchJr](http://scratchjr.org/) project.
+-我们是一群Scratch爱好者，感谢Scratch为我们提供了非常棒的少儿编程工具。
+ScratchJr是Scratch官方提供的面向5-7岁儿童，学习Scratch的入门工具。相比较Scratch而言，ScratchJr更加适合初学者。
+官方开源地址[ScratchJr](https://github.com/LLK/scratchjr)，官方提供了iPad和Android平板版本。
 
-ScratchJr can be built both for iOS and Android.
-A pure-web version is planned to follow at some point in the future.
+-[jfo8000](https://github.com/jfo8000/ScratchJr-Desktop/)提供了[window 和 Mac版本](https://jfo8000.github.io/ScratchJr-Desktop/)，安装后就可以体验ScratchJr。
 
-Platform | Status
--------- | -------------
-iOS      | Released in App Store
-Android  | Released in Google Play
+-我们的目标是把ScratchJr修改为网页版本，在浏览器中打开网页就可以体验ScratchJr，同时保持与官方版本的兼容。
 
-## Release Schedule
+-我们目前的计划：
+1、修改Bug；
+2、实现类似Scratch中导入、导出功能，以及云存储功能；
 
-As of this writing, the Android version now supports Android 4.4
-and above.
+-与官方保持同步，目前更新到官方2020-9-14版本。
+官方版本已经很久没有更新，2020-9-14版本的主要修改：
+1、统一iOS 和 Android与JS交互的接口，具体的见tablet\OS.js
+2、升级iOS底层，不在使用iOS已经废弃的WebView，使用WKWebView，估计官方App Store版本将会更新
 
-## Architecture Overview
-The diagram below illustrates the architecture of ScratchJr and
-how the iOS (functional), Android (functional) and pure HTML5 (future)
-versions share a common client.
+-官方版本只考虑了iOS 和 Andorid，对网页支持的并不好，主要体现在以下几个方面：
+1、事件点击：官方版本点击事件使用的是ontouchstart/ontouchmove/ontouchend，网页版本在此基础上增加了扩展onmousedown/onmousemove/onmouseup，详细修改见 utils/lib.js
+2、数据存储：官方调用的是iOS 和 Andorid底层的API，iOS主要是sqlite数据库接口，Android应该也是。网页也使用的sqlite接口，详细说明见tablet\Database.js。在这里额外说明下，iOS系统上默认是关闭了sqlite数据库存储的接口，考虑增加数据导入导出功能 和 云存储功能，这也当前网页版本下一个版本计划实现的功能。
+3、录音/录制视频、声音播放功能：官方调用的是iOS 和 Andorid底层的API，网页版本使用recordrtc实现录制功能，使用soundmanager2实现声音播放功能，详细说明见tablet\Web.js；
 
-![Scratch Jr. Architecture Diagram](doc/scratchjr_architecture.png)
+tablet底层接口简要说明，目前包括三个平台：
+1、Adnroid.js：js调用Android底层API
+2、iOS.js：js调用iOS底层API
+3、WebOS.js：调用网页相关功能
 
+在OS.waitForInterface()中获取平台相关信息，调用对应的平台。
 
-## Directory Structure and Projects
-This repository has the following directory structure:
-
-* <tt>src/</tt> - Shared JavaScript code for iOS and Android common client. This is where most changes should be made for features, bug fixes, UI, etc.
-* <tt>editions/</tt> - Assembly directories for each "flavor" of ScratchJr. These symlink to src for common code, and could diverge in settings and assets.
-  * <tt>free/</tt> - Free edition JavaScript, including all shared code for all releases
-* <tt>android/</tt> - Android port of Scratch Jr. (Java, Android Studio Projects)
-  * <tt>ScratchJr/</tt> - Android Studio Project for ScratchJr Android Application
-* <tt>bin/</tt> - Build scripts and other executables
-* <tt>doc/</tt> - Developer Documentation
-* <tt>ios/</tt> - Xcode project for iOS build. (Make sure to open <tt>ScratchJr.xcworkspace</tt> not <tt>ScratchJr.xcodeproj</tt>)
-
-## Building ScratchJr
-
-### Initial setup
-
-Regardless of whether you are doing iOS development or Android development, you should do these steps.
-
-*These instructions assume you are building both versions on Mac OSX, with [Homebrew](http://brew.sh) installed.*
-
-1. Clone or update the code for this repo
-2. Ensure you have node and npm [installed](http://blog.npmjs.org/post/85484771375/how-to-install-npm).
-3. Run <tt>sudo easy_install pysvg</tt> to install python svg libraries
-4. Run <tt>brew install librsvg</tt> to install commandline `rsvg-convert`
-5. Run <tt>brew install imagemagick</tt> to install commandline `magick`
-6. In the top level of the scratchjr repo directory, install npm dependencies for bundling the JavaScript: <tt>npm install</tt>
-
-### Analytics
-ScratchJr uses the Firebase SDK to record analytics for the app. Scratch Team developers should look for
-the configuration files in the Scratch Devs Vault. If you're not on the Scratch Team, then you'll need to
-set up your own [app analytics](https://firebase.google.com/products/analytics) with Google Firebase. It's free. Firebase will generate the configuration files for you to download.
-
-1. Place the `google-services.json` file in `editions/free/android-resources`
-2. Place the `GoogleService-Info.plist` file in `editions/free/ios-resources`
-
-### iOS
-
-1. To build the iOS version, you need to have a Mac with Xcode
-2. Run <tt>brew install cocoapods</tt> to install CocoaPods
-3. Run <tt>pod install</tt> to install the Firebase Analytics dependencies
-4. Open Xcode
-5. In Xcode, open <tt>ios/ScratchJr.xcworkspace</tt>
-
-### Android
-
-1. Install or update Android Studio
-2. In Android Studio, open the project <tt>android/ScratchJr</tt>
-3. Choose the appropriate flavor/build variant in Android Studio
-
-*Note: you can still do Android development on Ubuntu. Instead of the install commands above, run:*
-
-1. <tt>sudo easy_install pysvg</tt> to install python svg libraries
-2. <tt>sudo apt-get install librsvg2-bin</tt> to install rsvg-convert
-3. <tt>sudo apt-get install imagemagick</tt> to install ImageMagick
-
-## Where and how to make changes
-
-All changes should be made in a fork. Before making a pull request, ensure all changes pass our linter:
-* <tt>npm run lint</tt>
-
-For more information, see [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Code credits
-ScratchJr would not be possible without free and open source libraries, including:
-* [Snap.svg](https://github.com/adobe-webplatform/Snap.svg/)
-* [JSZip](https://github.com/Stuk/jszip)
-* [Intl.js](https://github.com/andyearnshaw/Intl.js)
-* [Yahoo intl-messageformat](https://github.com/yahoo/intl-messageformat)
-
-## Acknowledgments
-ScratchJr is a collaborative effort between:
-
-* [Tufts DevTech Research Group](http://ase.tufts.edu/devtech/)
-* [Lifelong Kindergarten group at MIT Media Lab](http://llk.media.mit.edu/)
-* [Playful Invention Company](http://www.playfulinvention.com/)
-* [Two Sigma Investments](http://twosigma.com)
