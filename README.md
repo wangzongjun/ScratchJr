@@ -21,15 +21,15 @@ ScratchJr是Scratch官方提供的面向5-7岁儿童，学习Scratch的入门工
 
 **官方版本只考虑了iOS 和 Andorid，对网页支持的并不好，主要体现在以下几个方面：**
 
-1. 事件点击：官方版本点击事件使用的是ontouchstart/ontouchmove/ontouchend，网页版本在此基础上增加了onmousedown/onmousemove/onmouseup，详细修改见 utils/lib.js
-2. 数据存储：官方调用的是iOS 和 Andorid底层的API，iOS主要是sqlite数据库接口，网页版本也使用的sqlite接口，详细说明见tablet\Database.js。在这里额外说明下，**iOS系统上默认关闭了sqlite数据库存储的接口**。
-3. 录音/录制视频、声音播放功能：官方调用的是iOS 和 Andorid底层的API，网页版本使用recordrtc实现录制功能，使用soundmanager2实现声音播放功能，详细说明见tablet\Web.js；
+1. **事件点击**：官方版本点击事件使用的是ontouchstart/ontouchmove/ontouchend，网页版本在此基础上增加了onmousedown/onmousemove/onmouseup，详细修改见 utils/lib.js
+2. **数据存储**：官方调用的是iOS 和 Andorid底层的API，iOS主要是sqlite数据库接口，网页版本也使用的sqlite接口，详细说明见tablet\Database.js。在这里额外说明下，**iOS系统上默认关闭了sqlite数据库存储的接口**。
+3. **录音/录制视频、声音播放功能**：官方调用的是iOS 和 Andorid底层的API，网页版本使用recordrtc实现录制功能，使用soundmanager2实现声音播放功能，详细说明见tablet\Web.js；
 
 
-tablet底层接口简要说明，目前包括三个平台：
-1. Adnroid.js：js调用Android底层API
-2. iOS.js：js调用iOS底层API
-3. WebOS.js：调用网页相关功能
+**tablet底层接口简要说明，目前包括三个平台：**
+1. **Adnroid.js**：js调用Android底层API
+2. **iOS.js**：js调用iOS底层API
+3. **WebOS.js**：调用网页相关功能
 
 在**OS.waitForInterface()**中获取平台相关信息，调用对应的平台。
 
