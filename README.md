@@ -18,6 +18,7 @@ ScratchJr是Scratch官方提供的面向5-7岁儿童，学习Scratch的入门工
 与官方保持同步，目前更新到官方2020-9-14版本，这个版本的主要修改：
 1. 统一iOS 和 Android与JS交互的接口，具体的见tablet\OS.js
 2. 升级iOS底层，不再使用iOS已经废弃的WebView，使用新的WKWebView。
+3. 增加新的国际化语言
 
 **官方版本只考虑了iOS 和 Andorid，对网页支持的并不好，主要体现在以下几个方面：**
 
