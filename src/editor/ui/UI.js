@@ -22,7 +22,7 @@ import Localization from '../../utils/Localization';
 import ScratchAudio from '../../utils/ScratchAudio';
 import {frame, gn, CSSTransition, localx, newHTML, scaleMultiplier, fullscreenScaleMultiplier, getIdFor, isTablet, newDiv,
     newTextInput, isAndroid, getDocumentWidth, getDocumentHeight, setProps, globalx, onTouchStartBind, onTouchEndBind} from '../../utils/lib';
-
+import FileSaver from 'file-saver'
 let projectNameTextInput = null;
 let info = null;
 let okclicky = null;
@@ -125,9 +125,13 @@ export default class UI {
             var parentsSection = newHTML('div', 'infoboxParentsSection', infobox);
             parentsSection.setAttribute('id', 'parentsection');
 
-            var parentsButton = newHTML('div', 'infoboxParentsButton', parentsSection);
-            parentsButton.id = 'infoboxParentsSectionButton';
-            parentsButton.textContent = Localization.localize('FOR_PARENTS');
+            var saveLocalButton = newHTML('div', 'infoboxsaveLocalButton', parentsSection);
+            saveLocalButton.id = 'infoboxParentsSectionButton';
+            saveLocalButton.textContent = Localization.localize('SAVE_LOCAL');
+
+            var saveCloudButton= newHTML('div', 'infoboxsaveLocalButton', parentsSection);
+            // saveCloudButton.id = 'infoboxParentsSectionButton';
+            saveCloudButton.textContent = Localization.localize('SAVE_CLOUD');
 
             // Sharing
             var shareButtons = newHTML('div', 'infoboxShareButtons', infobox);
@@ -156,16 +160,64 @@ export default class UI {
                 });
             }
 
-            OS.deviceName(function (name) {
-                gn('deviceName').textContent = name;
-            });
+            // OS.deviceName(function (name) {
+            //     gn('deviceName').textContent = name;
+            // });
 
             var shareLoadingGif = newHTML('img', 'infoboxShareLoading', shareButtons);
             shareLoadingGif.src = './assets/ui/loader.png';
 
-            onTouchStartBind(parentsButton,function (e) {
-                UI.parentalGate(e, function (e) {
-                    UI.showSharing(e, shareButtons, parentsSection);
+            onTouchStartBind(saveLocalButton,function (e) {
+                // UI.parentalGate(e, function (e) {
+                //     UI.showSharing(e, shareButtons, parentsSection);
+                // });
+                 // Save the project's new name
+                UI.handleTextFieldSave(true);
+
+                // Save any changes made to the project
+                ScratchJr.onHold = true; // Freeze the editing UI
+                ScratchJr.stopStripsFromTop(e);
+
+                Project.prepareToSave(ScratchJr.currentProject, function () {
+                    // Alert.close();
+                    // Package the project as a .sjr file
+                    IO.zipProject(ScratchJr.currentProject, function (contents) {
+                        FileSaver.saveAs(contents, IO.zipFileName + ".sjr") 
+                        ScratchJr.onHold = false; // Unfreeze the editing UI
+                        // var emailSubject = Localization.localize('SHARING_EMAIL_SUBJECT', {
+                        //     PROJECT_NAME: IO.shareName
+                        // });
+                        // OS.sendSjrToShareDialog(IO.zipFileName, emailSubject, Localization.localize('SHARING_EMAIL_TEXT'),
+                        //     shareType, contents);
+
+                        shareLoadingGif.style.visibility = 'hidden';
+                    });
+                });
+            });
+
+            onTouchStartBind(saveCloudButton,function (e) {
+                alert("未对接API")
+                return;
+                UI.handleTextFieldSave(true);
+
+                // Save any changes made to the project
+                ScratchJr.onHold = true; // Freeze the editing UI
+                ScratchJr.stopStripsFromTop(e);
+
+                Project.prepareToSave(ScratchJr.currentProject, function () {
+                    // Alert.close();
+                    // Package the project as a .sjr file
+                    IO.zipProject(ScratchJr.currentProject, function (contents) {
+                        
+                        ScratchJr.onHold = false; // Unfreeze the editing UI
+                        // var emailSubject = Localization.localize('SHARING_EMAIL_SUBJECT', {
+                        //     PROJECT_NAME: IO.shareName
+                        // });
+                        // OS.sendSjrToShareDialog(IO.zipFileName, emailSubject, Localization.localize('SHARING_EMAIL_TEXT'),
+                        //     shareType, contents);
+
+                        shareLoadingGif.style.visibility = 'hidden';
+                    });
                 });
             });
         }
@@ -271,12 +323,14 @@ export default class UI {
 
                 // Package the project as a .sjr file
                 IO.zipProject(ScratchJr.currentProject, function (contents) {
+                    console.log("save file")
+                    FileSaver.saveAs(contents, IO.zipFileName) 
                     ScratchJr.onHold = false; // Unfreeze the editing UI
-                    var emailSubject = Localization.localize('SHARING_EMAIL_SUBJECT', {
-                        PROJECT_NAME: IO.shareName
-                    });
-                    OS.sendSjrToShareDialog(IO.zipFileName, emailSubject, Localization.localize('SHARING_EMAIL_TEXT'),
-                        shareType, contents);
+                    // var emailSubject = Localization.localize('SHARING_EMAIL_SUBJECT', {
+                    //     PROJECT_NAME: IO.shareName
+                    // });
+                    // OS.sendSjrToShareDialog(IO.zipFileName, emailSubject, Localization.localize('SHARING_EMAIL_TEXT'),
+                    //     shareType, contents);
 
                     shareLoadingGif.style.visibility = 'hidden';
                 });

@@ -94,6 +94,7 @@ export default class Project {
         if (metadata.json) {
             Project.loadData(metadata.json, doneProjectLoad);
         } else {
+            //空项目
             mediaCount = 0;
             new Page(getIdFor('page'));
             Palette.selectCategory(1);
@@ -438,6 +439,8 @@ export default class Project {
 
     static save (id, whenDone) {
         saving = true;
+
+        //删除旧项目
         var th = metadata.thumbnail;
         if (th && ScratchJr.editmode != 'storyStarter') { // Don't try to delete the thumbnail in a sample project
             var thumb = (typeof th === 'string') ? JSON.parse(th) : th;
@@ -451,9 +454,12 @@ export default class Project {
         }
         metadata.id = id;
         metadata.json = Project.getProject(ScratchJr.stage.pages[0].id);
+
+        //保存项目缩略图
         Project.getThumbnailPNG(ScratchJr.stage.pages[0], 192, 144, getMD5);
         function getMD5 (dataurl) {
-            var pngBase64 = dataurl.split(',')[1];
+            // var pngBase64 = dataurl.split(',')[1];
+            var pngBase64 = dataurl
             OS.getmd5(pngBase64, function (str) {
                 savePNG(str, pngBase64);
             });
@@ -464,6 +470,7 @@ export default class Project {
             OS.setmedianame(pngBase64, filename, 'png', doNext);
         }
 
+        //保存项目数据
         function doNext (md5) {
             metadata.thumbnail = {
                 'pagecount': ScratchJr.stage.pages.length,
@@ -533,7 +540,7 @@ export default class Project {
     }
 
     /////////////////////////////
-    // Project PNG Thumbnail
+    // Project PNG Thumbnail 获取项目截图
     /////////////////////////////
 
     static getThumbnailPNG (page, w, h, fcn) {

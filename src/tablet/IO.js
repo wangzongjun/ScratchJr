@@ -6,7 +6,7 @@ import Lobby from '../lobby/Lobby';
 import SVG2Canvas from '../utils/SVG2Canvas';
 
 const database = 'projects';
-const collectLibraryAssets = false;
+const collectLibraryAssets = true; //保存素材库资源
 
 // Sharing state
 let zipFile = null;
@@ -265,6 +265,7 @@ export default class IO {
         json.values = [obj.version, obj.deleted, obj.name, JSON.stringify(obj.json),
             JSON.stringify(obj.thumbnail), (new Date()).getTime().toString()];
         json.stmt = 'update ' + database + ' set ' + keylist.toString() + ' where id = ' + obj.id;
+        console.log("saveProject:"+JSON.stringify(json));
         OS.stmt(json, fcn);
     }
 
@@ -307,6 +308,8 @@ export default class IO {
                 'sounds': []
             };
             var jsonData = IO.parseProjectData(JSON.parse(projectFromDB)[0]);
+            console.log("jsonData:");
+            console.log(jsonData);
 
             // Collect project assets for inclusion in zip file
             // Parse JSON representations of project data / thumbnail into usable types
@@ -342,35 +345,32 @@ export default class IO {
 
             // Project thumbnail
             collectAsset('thumbnails', jsonData.thumbnail.md5);
-
             var projectData = jsonData.json;
-
+            
             // Data for each page
             for (var p = 0; p < projectData.pages.length; p++) {
                 var pageReference = projectData.pages[p];
                 var page = projectData[pageReference];
-
                 // Page background
                 collectAsset('backgrounds', page.md5);
-
                 // Sprites
                 for (var s = 0; s < page.sprites.length; s++) {
                     var spriteReference = page.sprites[s];
                     var sprite = page[spriteReference];
-
                     if (sprite.type != 'sprite') {
                         continue;
                     }
-
                     // Sprite image
                     collectAsset('characters', sprite.md5);
-
                     // Sprite's recorded sounds
                     for (var snd = 0; snd < sprite.sounds.length; snd++) {
                         collectAsset('sounds', sprite.sounds[snd]);
                     }
                 }
             }
+
+            console.log("projectMetadata");
+            console.log(projectMetadata);
 
             // Get the media in projectMetadata and add it to a zip file
             zipFile = new JSZip();
@@ -385,6 +385,9 @@ export default class IO {
             // Generic function for adding media to the zip file
             var addMediaToZip = function (folder, md5) {
                 var addB64ToZip = function (b64data) {
+                    console.log("addMediaToZip:");
+                    console.log(folder + "--" + md5);
+                    console.log(b64data);
                     zipFile.file('project/' + folder + '/' + md5, b64data, {
                         base64: true,
                         createFolders: true
@@ -447,9 +450,11 @@ export default class IO {
             shareName = jsonData.name;
 
             function checkStatus () {
+                console.log("zip:" + zipAssetsActual + "/" + zipAssetsExpected);
                 if ((zipAssetsActual / zipAssetsExpected) == 1) {
                     finished(zipFile.generate({
-                        'compression': 'STORE'
+                        'compression': 'STORE',
+                        type:"blob"
                     }));
                 } else {
                     setTimeout(checkStatus, 200);

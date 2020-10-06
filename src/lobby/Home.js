@@ -38,6 +38,12 @@ export default class Home {
         tb.id = 'newproject';
     }
 
+    static openProjectThumbnail (parent) {
+        var tb = newHTML('div', 'projectthumb', parent);
+        newHTML('div', 'aproject open', tb);
+        tb.id = 'openproject';
+    }
+
     //////////////////////////
     // Events
     //////////////////////////
@@ -134,7 +140,10 @@ export default class Home {
             ScratchAudio.sndFX('keydown.wav');
             if (md5 && (md5 == 'newproject')) {
                 Home.createNewProject();
-            } else if (md5) {
+            } else if(md5 && (md5 == 'openproject')){
+                Home.openProject()
+            }else if (md5) {
+                //获取滚动位置
                 OS.setfile('homescroll.sjr', gn('wrapc').scrollTop, function () {
                     doNext(md5);
                 });
@@ -159,6 +168,10 @@ export default class Home {
             OS.analyticsEvent('lobby', 'existing_project_edited');
             window.location.href = 'editor.html?pmd5=' + md5 + '&mode=edit';
         }
+    }
+
+    static openProject(){
+        alert("暂未实现")
     }
 
     static createNewProject () {
@@ -250,6 +263,7 @@ export default class Home {
             div.removeChild(div.childNodes[0]);
         }
         Home.emptyProjectThumbnail(div);
+        Home.openProjectThumbnail(div);
         for (var i = 0; i < data.length; i++) {
             Home.addProjectLink(div, data[i]);
         }
@@ -298,10 +312,11 @@ export default class Home {
         var md5 = data.md5;
         var img = newHTML('img', undefined, p);
         if (md5) {
-            IO.getAsset(md5, drawMe);
+            // IO.getAsset(md5, drawMe);
+            OS.getmedia(md5, drawMe);
         }
         function drawMe (url) {
-            img.src = url;
+            img.src = atob(url);
         }
     }
 }

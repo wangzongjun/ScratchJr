@@ -58,8 +58,8 @@ export default class WebUtils {
 
     //-----------Base64-----------
     static encodeBase64(str) {
-        if (window.Settings.enableLog)
-            WebUtils.log("WebUtils.encodeBase64({0})".format(str));
+        // if (window.Settings.enableLog)
+        //     WebUtils.log("WebUtils.encodeBase64({0})".format(str));
         return Base64.encode(str);
     }
 

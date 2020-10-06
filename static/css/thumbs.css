@@ -31,6 +31,10 @@
     background:  url('../assets/lobby/newproject.png');
     background-size: 100%;
 }
+.aproject.open {
+    background:  url('../assets/lobby/openproject.png');
+    background-size: 100%;
+}
 .aproject.p1 {
     background:  url('../assets/lobby/project1.png');
     background-size: 100%;

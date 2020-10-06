@@ -316,19 +316,20 @@ export default class Database {
         });
     }
 
-    static getmediadata(filename, offset, length) {
+    static getmediadata(filename, offset, length, fcn) {
         if (window.Settings.enableLog)
             WebUtils.log("Database.getmediadata({0},{1},{2})".format(filename, offset, length));
         let strData = mediastrings[filename];
-        let subData = strData.substr(offset, length);
-        return subData;
+        if (offset != null && length != null)
+            strData = strData.substr(offset, length);
+            Database._fcnF(fcn, strData);
     }
 
-    static getmediadone(filename) {
+    static getmediadone(filename, fcn) {
         if (window.Settings.enableLog)
             WebUtils.log("Database.getmediadone({0})".format(filename));
-        delete mediastrings[filename];
-        return "1";
+            console.log(mediastrings[filename]);
+        Database._fcnF(fcn, mediastrings[filename]);
     }
 
     static getMD5(str) {

@@ -46,7 +46,7 @@ let layerTop = 10;
 let layerAboveBottom = 4;
 let dragginLayer = 7000;
 
-let currentProject = undefined;
+let currentProject = undefined; //项目ID
 let editmode;
 
 let isDebugging = false;
@@ -376,6 +376,7 @@ export default class ScratchJr {
         }
     }
 
+    //保存并返回菜单
     static saveAndFlip (e) {
         onHold = true;
         ScratchJr.stopStripsFromTop(e);
