@@ -1,3 +1,4 @@
+var path = require('path');
 var WebpackNotifierPlugin = require('webpack-notifier');
 
 module.exports = {
@@ -5,9 +6,15 @@ module.exports = {
     entry: {
         app: './src/entry/app.js'
     },
+    devtool: 'cheap-module-source-map',
+    devServer: {
+        contentBase: path.resolve(__dirname, 'static'),
+        host: '127.0.0.1',
+        port: process.env.PORT || 8080
+    },
     output: {
         path: __dirname + '/static',
-        filename: '[name].bundle.js'
+        filename: '[name].bundle.js',
     },
     performance: {
         hints: false
