@@ -1,7 +1,6 @@
 import WebUtils from './WebUtils';
 
 let dataBase = null;
-let mediastrings = {};
 export default class Database {
     static initTables() {
         if (window.Settings.enableLog)
@@ -302,34 +301,16 @@ export default class Database {
         Database._fcnF(fcn, "1");
     }
 
-    static getmedialen(file, key, fcn) {
+    static getmedia(file, fcn) {
         if (window.Settings.enableLog)
-            WebUtils.log("Database.getmedialen({0},{1})".format(file, key));
+            WebUtils.log("Database.getmedia({0},{1})".format(file, key));
         Database.getfile(file, function (strData) {
             if (strData == null) {
-                Database._fcnF(fcn, null);
+                Database._fcnF(fcn, "");
                 return;
             }
-            mediastrings[key] = strData;
-            let strRe = "{0}".format(strData.length);
-            Database._fcnF(fcn, strRe);
-        });
-    }
-
-    static getmediadata(filename, offset, length, fcn) {
-        if (window.Settings.enableLog)
-            WebUtils.log("Database.getmediadata({0},{1},{2})".format(filename, offset, length));
-        let strData = mediastrings[filename];
-        if (offset != null && length != null)
-            strData = strData.substr(offset, length);
             Database._fcnF(fcn, strData);
-    }
-
-    static getmediadone(filename, fcn) {
-        if (window.Settings.enableLog)
-            WebUtils.log("Database.getmediadone({0})".format(filename));
-            console.log(mediastrings[filename]);
-        Database._fcnF(fcn, mediastrings[filename]);
+        });
     }
 
     static getMD5(str) {

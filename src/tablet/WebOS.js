@@ -1,7 +1,6 @@
 import Web from './Web';
 
 let camera;
-let mediacounter = 0;
 let tabletInterface = null;
 
 export default class WebOS {
@@ -27,29 +26,7 @@ export default class WebOS {
     }
 
     static getmedia(file, fcn) {
-        mediacounter++;
-        var nextStep = function (file, key, whenDone) {
-            tabletInterface.io_getmedialen(file, key, function (result) {
-                WebOS.processdata(key, 0, result, '', whenDone);
-            });
-        };
-        nextStep(file, mediacounter, fcn);
-    }
-
-    static getmediadata(key, offset, len, fcn) {
-        tabletInterface.io_getmediadata(key, offset, len, fcn);
-    }
-
-    static processdata(key, off, len, oldstr, fcn) {
-        if (len == 0) {
-            WebOS.getmediadone(key);
-            fcn(oldstr);
-            return;
-        }
-        var newlen = (len < 100000) ? len : 100000;
-        WebOS.getmediadata(key, off, newlen, function (str) {
-            WebOS.processdata(key, off + newlen, len - newlen, oldstr + str, fcn);
-        });
+        tabletInterface.io_getmedia(file, fcn);
     }
 
     static getsettings(fcn) {
@@ -57,10 +34,6 @@ export default class WebOS {
         if (fcn) {
             fcn(result);
         }
-    }
-
-    static getmediadone(file, fcn) {
-        tabletInterface.io_getmediadone(file, fcn);
     }
 
     static setmedia(str, ext, fcn) {
@@ -169,11 +142,8 @@ export default class WebOS {
         tabletInterface.scratchjr_captureimage(fcn);
     }
 
-    static hidesplash(fcn) {
+    static hidesplash() {
         tabletInterface.hideSplash();
-        if (fcn) {
-            fcn();
-        }
     }
 
     static trace(str) {
