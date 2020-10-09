@@ -37,18 +37,18 @@ export default class Database {
     }
 
     static _exec(body, fcn) {
-        if (window.Settings.enableLog)
-            WebUtils.log("Database._exec({0})".format(body));
+        //if (window.Settings.enableLog)
+        //    WebUtils.log("Database._exec({0})".format(body));
         dataBase.transaction(function (tx) {
             tx.executeSql(body, [],
                 function (tx, results) {
-                    if (window.Settings.enableLog)
-                        WebUtils.log("Database._exec({0} - success.)".format(body));
+                    //if (window.Settings.enableLog)
+                    //    WebUtils.log("Database._exec({0} - success.)".format(body));
                     Database._fcnF(fcn, true);
                 },
                 function (tx, error) {
-                    if (window.Settings.enableLog)
-                        WebUtils.log("Database._exec({0} - Error:{1})".format(body, error.message));
+                    //if (window.Settings.enableLog)
+                    //    WebUtils.log("Database._exec({0} - Error:{1})".format(body, error.message));
                     Database._fcnF(fcn, false);
                 }
             );
@@ -303,7 +303,7 @@ export default class Database {
 
     static getmedia(file, fcn) {
         if (window.Settings.enableLog)
-            WebUtils.log("Database.getmedia({0},{1})".format(file, key));
+            WebUtils.log("Database.getmedia({0})".format(file));
         Database.getfile(file, function (strData) {
             if (strData == null) {
                 Database._fcnF(fcn, "");
@@ -375,7 +375,7 @@ export default class Database {
 
     static writefile(filename, contents, fcn) {
         if (window.Settings.enableLog)
-            WebUtils.log("Database.writefile({0},{1})".format(filename, contents));
+            WebUtils.log("Database.writefile({0})".format(filename));
         let url = Database._getDocumentPath(filename);
         let plaindata = WebUtils.decodeBase64(contents);
         Database._writeToURL(url, plaindata, function (ok) {

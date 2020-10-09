@@ -57,10 +57,10 @@ export default class Web {
     }
 
     static io_setmedia(contents, ext, fcn) {
-        if (window.Settings.enableLog)
-            WebUtils.log("Web.io_setmedia({0},{1})".format(contents, ext));
         let key = Database.getMD5(contents);
         let md5 = "{0}.{1}".format(key, ext);
+        if (window.Settings.enableLog)
+            WebUtils.log("Web.io_setmedia({0}) - {1}".format(ext,md5));
         Database._writeToURL(md5, contents, fcn);
     }
 
@@ -175,7 +175,7 @@ export default class Web {
     }
 
     static hideSplash() {
-        WebUtils.log("Web.hideSplash({0})".format());
+        WebUtils.log("Web.hideSplash()".format());
     }
 
     static sendSjrUsingShareDialog(fileName, emailSubject, emailBody, shareType, b64data) {
