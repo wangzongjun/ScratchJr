@@ -44,7 +44,7 @@ let root;
 let saving = false;
 let paintFrame;
 let saveMD5 = undefined;
-let svgdata;
+let svgdata = undefined; //当前svg数据
 let splash;
 let splashshade;
 let maxZoom = 5;

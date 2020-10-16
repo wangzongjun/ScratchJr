@@ -458,8 +458,7 @@ export default class Project {
         //保存项目缩略图
         Project.getThumbnailPNG(ScratchJr.stage.pages[0], 192, 144, getMD5);
         function getMD5 (dataurl) {
-            // var pngBase64 = dataurl.split(',')[1];
-            var pngBase64 = dataurl
+            var pngBase64 = dataurl.split(',')[1];
             OS.getmd5(pngBase64, function (str) {
                 savePNG(str, pngBase64);
             });

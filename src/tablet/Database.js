@@ -301,16 +301,25 @@ export default class Database {
         Database._fcnF(fcn, "1");
     }
 
-    static getmedia(file, fcn) {
+    static setmedia(contents, ext, fcn) {
+        let key = Database.getMD5(contents);
+        let md5 = "{0}.{1}".format(key, ext);
         if (window.Settings.enableLog)
-            WebUtils.log("Database.getmedia({0})".format(file));
-        Database.getfile(file, function (strData) {
-            if (strData == null) {
-                Database._fcnF(fcn, "");
-                return;
-            }
-            Database._fcnF(fcn, strData);
-        });
+            WebUtils.log("Database.setmedia({0}) - {1}".format(ext,md5));
+        Database._writeToURL(md5, contents, fcn);
+    }
+
+    static getmedia(filename, fcn) {
+        if (window.Settings.enableLog)
+            WebUtils.log("Database.getmedia({0})".format(filename));
+            let url = Database._getDocumentPath(filename);
+            Database._initWithContentsOfURL(url, function (data) {
+                if (data == null) {
+                    Database._fcnF(fcn, null);
+                    return;
+                }
+                Database._fcnF(fcn, data);
+            });
     }
 
     static getMD5(str) {

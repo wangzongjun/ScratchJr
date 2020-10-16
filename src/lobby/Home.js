@@ -263,7 +263,7 @@ export default class Home {
             div.removeChild(div.childNodes[0]);
         }
         Home.emptyProjectThumbnail(div);
-        Home.openProjectThumbnail(div);
+        //Home.openProjectThumbnail(div);
         for (var i = 0; i < data.length; i++) {
             Home.addProjectLink(div, data[i]);
         }
@@ -312,11 +312,10 @@ export default class Home {
         var md5 = data.md5;
         var img = newHTML('img', undefined, p);
         if (md5) {
-            // IO.getAsset(md5, drawMe);
-            OS.getmedia(md5, drawMe);
+            IO.getAsset(md5, drawMe);
         }
         function drawMe (url) {
-            img.src = atob(url);
+            img.src = url;
         }
     }
 }

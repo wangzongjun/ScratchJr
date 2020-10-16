@@ -57,11 +57,7 @@ export default class Web {
     }
 
     static io_setmedia(contents, ext, fcn) {
-        let key = Database.getMD5(contents);
-        let md5 = "{0}.{1}".format(key, ext);
-        if (window.Settings.enableLog)
-            WebUtils.log("Web.io_setmedia({0}) - {1}".format(ext,md5));
-        Database._writeToURL(md5, contents, fcn);
+        Database.setmedia(contents, ext, fcn);
     }
 
     static io_setmedianame(contents, key, ext, fcn) {
