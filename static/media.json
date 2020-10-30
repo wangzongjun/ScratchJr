@@ -23,14 +23,13 @@
     	{"md5":"Bedroom.svg","width":480,"height":360,"ext":"svg","name":"Bedroom"},
     	{"md5":"EmptyRoom.svg","width":480,"height":360,"ext":"svg","name":"Empty Room"},
 
-
     	{"md5":"Summer.svg","width":480,"height":360,"ext":"svg","name":"Summer"},
     	{"md5":"Fall.svg","width":480,"height":360,"ext":"svg","name":"Fall"},
     	{"md5":"Winter.svg","width":480,"height":360,"ext":"svg","name":"Winter"},
     	{"md5":"Spring.svg","width":480,"height":360,"ext":"svg","name":"Spring"},
     	{"md5":"Creek.svg","width":480,"height":360,"ext":"svg","name":"River"},
     	{"md5":"Lake.svg","width":480,"height":360,"ext":"svg","name":"Lake"},
-      {"md5":"Woods.svg","width":480,"height":360,"ext":"svg","name":"Woods"},
+        {"md5":"Woods.svg","width":480,"height":360,"ext":"svg","name":"Woods"},
 
     	{"md5":"BeachDay.svg","width":480,"height":360,"ext":"svg","name":"Beach Day"},
     	{"md5":"BeachSunrise.svg","width":480,"height":360,"ext":"svg","name":"Beach Sunset"},
@@ -45,6 +44,7 @@
     	{"md5":"MoonBkg.svg","width":480,"height":360,"ext":"svg","name":"Moon"}
     ],
     "sprites": [
+		{"md5":"Cat.svg","width":94,"height":104,"ext":"svg","name":"Cat","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Blue.svg","width":151,"height":253,"ext":"svg","name":"Tic","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Purple.svg","width":161,"height":185,"ext":"svg","name":"Tac","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Red.svg","width":213,"height":198,"ext":"svg","name":"Toc","order":"characters,02 funky","tags":["characters","02 funky"]},
