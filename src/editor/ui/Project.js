@@ -83,7 +83,16 @@ export default class Project {
         ScratchJr.log('all UI assets recieved - procced to call server', ScratchJr.getTime(), 'sec');
         Project.setProgress(20);
         UI.layout();
-        IO.getObject(ScratchJr.currentProject, Project.dataRecieved);
+        if(ScratchJr.filepath){
+            Project.downloadProject(ScratchJr.filepath, (md5)=>{
+                // window.location.href = 'editor.html?pmd5=' + md5 + '&mode=edit';
+                ScratchJr.currentProject = md5
+                history.replaceState(null,document.title,location.href.split("?")[0] + '?pmd5=' + md5 + '&mode=edit');
+                IO.getObject(md5+"", Project.dataRecieved);
+            });
+        }else{
+            IO.getObject(ScratchJr.currentProject, Project.dataRecieved);
+        }
     }
 
     static dataRecieved (str) {
@@ -322,6 +331,30 @@ export default class Project {
     //////////////////////////////////////////////////
     // load project data
     //////////////////////////////////////////////////
+
+    static downloadProject(filepath, cb){
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", filepath);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function(){
+            if(xhr.readyState == 4 && xhr.status == 200){
+                var req = xhr.response;
+                console.log("download finished");
+                IO.loadProjectFromSjr(req, (md5)=>{
+                    cb(md5)
+                })
+            } else if(xhr.readyState == 4 && xhr.status == 404){
+                cb(null);
+            };
+        }
+        xhr.upload.onprogress = function(evt){ 
+            var loaded = evt.loaded; 
+            var tot = evt.total; 
+            var per = Math.floor(100*loaded/tot); 
+            console.log("download progress:" + per);
+        } 
+        xhr.send()
+    }
 
     static recreate (data) {
         ScratchJr.log('Project data structures start loading', ScratchJr.getTime(), 'sec');

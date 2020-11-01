@@ -196,26 +196,33 @@ export default class UI {
             });
 
             onTouchStartBind(saveCloudButton,function (e) {
-                alert("未对接API")
-                return;
                 UI.handleTextFieldSave(true);
-
-                // Save any changes made to the project
                 ScratchJr.onHold = true; // Freeze the editing UI
                 ScratchJr.stopStripsFromTop(e);
-
                 Project.prepareToSave(ScratchJr.currentProject, function () {
-                    // Alert.close();
-                    // Package the project as a .sjr file
                     IO.zipProject(ScratchJr.currentProject, function (contents) {
-                        
-                        ScratchJr.onHold = false; // Unfreeze the editing UI
-                        // var emailSubject = Localization.localize('SHARING_EMAIL_SUBJECT', {
-                        //     PROJECT_NAME: IO.shareName
-                        // });
-                        // OS.sendSjrToShareDialog(IO.zipFileName, emailSubject, Localization.localize('SHARING_EMAIL_TEXT'),
-                        //     shareType, contents);
-
+                        var form = new FormData();
+                        contents.name = IO.zipFileName + ".sjr";
+                        form.append("file", contents);
+                        form.append("biz", "sjr")
+                        // XMLHttpRequest 对象
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "/api/sys/common/upload", true);
+                        xhr.onload = function () {
+                            if(xhr.readyState == 4 && xhr.status == 200){
+                                var req = xhr.responseText;
+                            } else if(xhr.readyState == 4 && xhr.status == 404){
+                                return;
+                            };
+                        };
+                        xhr.upload.onprogress = function(evt){ 
+                            var loaded = evt.loaded; 
+                            var tot = evt.total; 
+                            var per = Math.floor(100*loaded/tot); 
+                            console.log("upload progress:" + per);
+                        } 
+                        xhr.send(form)
+                        ScratchJr.onHold = false;
                         shareLoadingGif.style.visibility = 'hidden';
                     });
                 });
@@ -323,7 +330,6 @@ export default class UI {
 
                 // Package the project as a .sjr file
                 IO.zipProject(ScratchJr.currentProject, function (contents) {
-                    console.log("save file")
                     FileSaver.saveAs(contents, IO.zipFileName) 
                     ScratchJr.onHold = false; // Unfreeze the editing UI
                     // var emailSubject = Localization.localize('SHARING_EMAIL_SUBJECT', {

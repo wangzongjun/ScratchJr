@@ -47,6 +47,7 @@ let layerAboveBottom = 4;
 let dragginLayer = 7000;
 
 let currentProject = undefined; //项目ID
+let filepath = undefined;
 let editmode;
 
 let isDebugging = false;
@@ -128,6 +129,14 @@ export default class ScratchJr {
         return currentProject;
     }
 
+    static set currentProject(v){
+        currentProject = v;
+    }
+
+    static get filepath(){
+        return filepath;
+    }
+
     static get editmode () {
         return editmode;
     }
@@ -190,6 +199,9 @@ export default class ScratchJr {
         Project.loadIcon.src = 'assets/loading.png';
         ScratchJr.log('blocks init', ScratchJr.getTime(), 'sec', BlockSpecs.loadCount);
         currentProject = urlvars.pmd5;
+        if("filepath" in urlvars){
+            filepath = urlvars.filepath
+        }
         editmode = urlvars.mode;
         libInit();
         Project.init();
@@ -203,7 +215,7 @@ export default class ScratchJr {
         runtime = new Runtime();
         Undo.init();
         ScratchJr.editorEvents();
-        Project.load(currentProject);
+        Project.load();
         Events.init();
         if (window.Settings.autoSaveInterval > 0) {
             autoSaveSetInterval = window.setInterval(function () {
@@ -213,6 +225,27 @@ export default class ScratchJr {
                     });
                 }
             }, window.Settings.autoSaveInterval);
+        }
+
+        window.scratchjr = {}
+        window.scratchjr.projectName = IO.zipFileName
+        //获取sjr项目
+        window.scratchjr.getProjectSjr = function(cb){
+            let md5 = ScratchJr.currentProject + ""
+            Project.prepareToSave(md5, function () {
+                IO.zipProject(md5, function (contents) {
+                    ScratchJr.onHold = false;
+                    cb(contents, IO.zipFileName)
+                });
+            });
+        }
+        //载入网络sjr项目
+        window.scratchjr.loadProjectSjr = function(url){
+            Project.downloadProject(url, (md5)=>{
+                // window.location.href = 'editor.html?pmd5=' + md5 + '&mode=edit';
+                ScratchJr.currentProject = md5
+                IO.getObject(md5+"", Project.dataRecieved);
+            });
         }
     }
 
@@ -406,7 +439,7 @@ export default class ScratchJr {
             }
         }
 
-        if (!currentProject) {
+        if (!currentProject && !filepath) {
             return 'home.html?place=home';
         }
 

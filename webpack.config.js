@@ -10,7 +10,14 @@ module.exports = {
     devServer: {
         contentBase: path.resolve(__dirname, 'static'),
         host: '127.0.0.1',
-        port: process.env.PORT || 8080
+        port: process.env.PORT || 8601,
+        proxy: {
+            '/api': {
+              target: 'http://localhost:8080', 
+              ws: false,
+              changeOrigin: true
+            },
+          }
     },
     output: {
         path: __dirname + '/static',

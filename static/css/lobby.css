@@ -62,14 +62,14 @@ div.frame {
 }
 
 #topbar ul.topbar-nav li.logo {
-    width: ${css_vh(32)};
+    width: ${css_vh(12)};
 }
 
 #topbar ul.topbar-nav .logo .logo-icon {
     display: block;
-    width: ${css_vh(28.65)};
+    width: ${css_vh(10)};
     height: ${css_vh(10.03)};
-    background: url('../assets/lobby/scratchJrlogo.svg');
+    background: url('../assets/lobby/back.png');
     background-size: 101%;
     padding: 0;
     margin: auto auto;

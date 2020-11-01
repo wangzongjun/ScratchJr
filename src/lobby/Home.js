@@ -41,6 +41,11 @@ export default class Home {
     static openProjectThumbnail (parent) {
         var tb = newHTML('div', 'projectthumb', parent);
         newHTML('div', 'aproject open', tb);
+        var fileinput = newHTML('input', "fileinput", tb);
+        fileinput.setAttribute("type", "file")
+        fileinput.setAttribute("id", "fileinput");
+        fileinput.setAttribute("accept", ".sjr")
+        fileinput.setAttribute("style",'visibility:hidden');
         tb.id = 'openproject';
     }
 
@@ -171,7 +176,21 @@ export default class Home {
     }
 
     static openProject(){
-        alert("暂未实现")
+        document.getElementById('fileinput').addEventListener('change', e => {
+            const reader = new FileReader();
+            const thisFileInput = e.target;
+            reader.onload = () => {
+                console.log(reader);
+                IO.loadProjectFromSjr(reader.result, (md5)=>{
+                    console.log("load project:" + md5);
+                    OS.setfile('homescroll.sjr', gn('wrapc').scrollTop, function () {
+                        window.location.href = 'editor.html?pmd5=' + md5 + '&mode=edit';
+                    });
+                })
+            };
+            reader.readAsArrayBuffer(thisFileInput.files[0]);
+        });
+        document.getElementById('fileinput').click();
     }
 
     static createNewProject () {
@@ -198,7 +217,7 @@ export default class Home {
         var pn = [];
         var div = gn('scrollarea');
         for (var i = 0; i < div.childElementCount; i++) {
-            if (div.childNodes[i].id == 'newproject') {
+            if (div.childNodes[i].id == 'newproject' || div.childNodes[i].id == 'openproject') {
                 continue;
             }
             pn.push(div.childNodes[i].childNodes[1].childNodes[0].textContent);
@@ -263,7 +282,7 @@ export default class Home {
             div.removeChild(div.childNodes[0]);
         }
         Home.emptyProjectThumbnail(div);
-        //Home.openProjectThumbnail(div);
+        Home.openProjectThumbnail(div);
         for (var i = 0; i < data.length; i++) {
             Home.addProjectLink(div, data[i]);
         }

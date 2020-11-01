@@ -524,16 +524,18 @@ export default class IO {
     }
 
     // Receive a base64-encoded zip from iOS (upon open a project)
-    static loadProjectFromSjr (b64data) {
+    static loadProjectFromSjr (b64data, callback) {
         // Together, these two provide a "progress" indication
         // that lets us know when to refresh the lobby (when sE/sA = 1)
         var saveExpected = 0; // How many assets we expect to save - updated as we process the zip
         var saveActual = 0; // How many assets actually saved - updated as we make IO saves
+        var projectMd5 = null;
 
-        var receivedZip = JSZip();
-        receivedZip.load(b64data, {
-            'base64': true
-        });
+        var receivedZip = JSZip(b64data);
+        // var receivedZip = JSZip();
+        // receivedZip.load(b64data, {
+        //     'base64': true
+        // });
 
         // To store character MD5 -> character name map
         // The character name is stored in the project JSON; when we load
@@ -559,7 +561,9 @@ export default class IO {
 
                 IO.uniqueProjectName(jsonData, function (jsonData) {
                     jsonData.isgift = '1'; // Project will display with a bow and ribbon
-                    IO.createProject(jsonData, function () {});
+                    IO.createProject(jsonData, function (md5) {
+                        projectMd5 = md5
+                    });
                 });
 
                 // Build map of character filename -> character name
@@ -714,6 +718,13 @@ export default class IO {
             if (gn('hometab') !== null) { // Check if we're on the lobby page
                 if (saveActual == saveExpected) {
                     Lobby.setPage('home');
+                        callback(projectMd5)
+                } else { // Waiting for assets to be saved
+                    setTimeout(refreshLobby, 100);
+                }
+            }else{
+                if (saveActual == saveExpected) {
+                    callback(projectMd5)
                 } else { // Waiting for assets to be saved
                     setTimeout(refreshLobby, 100);
                 }
