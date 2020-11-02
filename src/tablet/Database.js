@@ -25,7 +25,7 @@ export default class Database {
             return;
         if (window.Settings.enableLog)
             WebUtils.log("Database.open({0})".format(body));
-        dataBase = openDatabase(body, "1.0", "ScratchJr.db", 1024 * 1024, function () {});
+        dataBase = openDatabase(body, "1.0", "ScratchJr web database", 1024 * 1024, function () {});
         this.initTables();
         return "0";
     }

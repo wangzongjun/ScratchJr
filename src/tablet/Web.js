@@ -14,7 +14,7 @@ String.prototype.format = function () {
 
 export default class Web {
     static init() {
-        Database.open("ScratchJrTest");
+        Database.open("ScratchJr");
         // Database.test();
         SoundPlayer.init(function (nRe) {
             if (nRe == 0)
