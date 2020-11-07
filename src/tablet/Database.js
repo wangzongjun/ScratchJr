@@ -141,7 +141,7 @@ export default class Database {
                 queryJson["stmt"] = "update userfiles set context = ? where name = ?";
             else
                 queryJson["stmt"] = "insert into userfiles (context,name) values (?, ?)";
-                
+
             queryJson["values"] = [plaindata, url];
             Database._stmtBool(JSON.stringify(queryJson), function (ok) {
                 let re = (!ok) ? "-1" : url;
