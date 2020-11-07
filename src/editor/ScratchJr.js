@@ -226,29 +226,27 @@ export default class ScratchJr {
                 }
             }, window.Settings.autoSaveInterval);
         }
-    }
 
-    //获取Sjr项目文件
-    static getProjectSjr(cb){
-        let md5 = ScratchJr.currentProject + ""
-        Project.prepareToSave(md5, function () {
-            IO.zipProject(md5, function (contents) {
-                ScratchJr.onHold = false;
-                cb(contents, IO.zipFileName)
+        window.scratchjr = {}
+        window.scratchjr.projectName = IO.zipFileName
+        //获取sjr项目
+        window.scratchjr.getProjectSjr = function(cb){
+            let md5 = ScratchJr.currentProject + ""
+            Project.prepareToSave(md5, function () {
+                IO.zipProject(md5, function (contents) {
+                    ScratchJr.onHold = false;
+                    cb(contents, IO.zipFileName)
+                });
             });
-        });
-    }
-    //加载网络Sjr文件
-    static loadProjectSjr(url){
-        Project.downloadProject(url, (md5)=>{
-            // window.location.href = 'editor.html?pmd5=' + md5 + '&mode=edit';
-            ScratchJr.currentProject = md5
-            IO.getObject(md5+"", Project.dataRecieved);
-        });
-    }
-    //获取项目截图base64
-    static getProjectCover(cb){
-        Project.getThumbnailPNG(ScratchJr.stage.pages[0], 192, 144, cb)
+        }
+        //载入网络sjr项目
+        window.scratchjr.loadProjectSjr = function(url){
+            Project.downloadProject(url, (md5)=>{
+                // window.location.href = 'editor.html?pmd5=' + md5 + '&mode=edit';
+                ScratchJr.currentProject = md5
+                IO.getObject(md5+"", Project.dataRecieved);
+            });
+        }
     }
 
     // Event handler for when a story is started
