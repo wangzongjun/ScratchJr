@@ -1,116 +1,48 @@
 import WebUtils from './WebUtils';
+import WebSQL from './WebSQL';
+import WebForage from './WebForage'
 
 let dataBase = null;
 export default class Database {
-    static initTables() {
-        if (window.Settings.enableLog)
-            WebUtils.log("Database.initTables()");
-        let stmt = "CREATE TABLE IF NOT EXISTS PROJECTS (ID INTEGER PRIMARY KEY AUTOINCREMENT, CTIME DATETIME DEFAULT CURRENT_TIMESTAMP, MTIME DATETIME, ALTMD5 TEXT, POS INTEGER, NAME TEXT, JSON TEXT, THUMBNAIL TEXT, OWNER TEXT, GALLERY TEXT, DELETED TEXT, VERSION TEXT, ISGIFT INTEGER DEFAULT 0)";
-        this._exec(stmt);
-        stmt = "CREATE TABLE IF NOT EXISTS USERSHAPES (ID INTEGER PRIMARY KEY AUTOINCREMENT, CTIME DATETIME DEFAULT CURRENT_TIMESTAMP, MD5 TEXT, ALTMD5 TEXT, WIDTH TEXT, HEIGHT TEXT, EXT TEXT, NAME TEXT, OWNER TEXT, SCALE TEXT, VERSION TEXT)";
-        this._exec(stmt);
-        stmt = "CREATE TABLE IF NOT EXISTS USERBKGS (ID INTEGER PRIMARY KEY AUTOINCREMENT, CTIME DATETIME DEFAULT CURRENT_TIMESTAMP, MD5 TEXT, ALTMD5 TEXT, WIDTH TEXT, HEIGHT TEXT, EXT TEXT, OWNER TEXT,  VERSION TEXT)";
-        this._exec(stmt);
-        stmt = "CREATE TABLE IF NOT EXISTS USERFILES (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, CONTEXT TEXT)";
-        this._exec(stmt);
-    }
-
     //re 0:表示成功 其他表示：Error
     static _fcnF(fcn, re, data = null) {
         WebUtils._fcnF(fcn, re, data);
     }
 
-    static open(body) {
+    static open(userName) {
         if (dataBase != null)
             return;
         if (window.Settings.enableLog)
-            WebUtils.log("Database.open({0})".format(body));
-        dataBase = openDatabase(body, "1.0", "ScratchJr.db", 1024 * 1024, function () {});
-        this.initTables();
+            WebUtils.log("Database.open({0})".format(userName));
+        dataBase = new WebForage(userName);
         return "0";
     }
 
     static close(str) {
         if (window.Settings.enableLog)
             WebUtils.log("Database.close({0})".format(str));
+        if (dataBase != null)
+            dataBase.close(str);
         return "0";
     }
 
     static _exec(body, fcn) {
         //if (window.Settings.enableLog)
         //    WebUtils.log("Database._exec({0})".format(body));
-        dataBase.transaction(function (tx) {
-            tx.executeSql(body, [],
-                function (tx, results) {
-                    //if (window.Settings.enableLog)
-                    //    WebUtils.log("Database._exec({0} - success.)".format(body));
-                    Database._fcnF(fcn, true);
-                },
-                function (tx, error) {
-                    //if (window.Settings.enableLog)
-                    //    WebUtils.log("Database._exec({0} - Error:{1})".format(body, error.message));
-                    Database._fcnF(fcn, false);
-                }
-            );
-        });
+        dataBase._exec(body, fcn);
         return "success";
     }
 
-    //executeSql函数有四个参数，其意义分别是：
-    // 1）表示查询的字符串，使用的SQL语言是SQLite 3.6.19。（必选）
-    // 2）插入到查询中问号所在处的字符串数据。（可选）
-    // 3）成功时执行的回调函数。返回两个参数：tx和执行的结果。（可选）
-    // 4）一个失败时执行的回调函数。返回两个参数：tx和失败的错误信息。（可选）
     static stmt(body, fcn) {
         if (window.Settings.enableLog)
             WebUtils.log("Database.stmt({0})".format(body));
-        let jsonData = JSON.parse(body);
-        //"update db set fieldname = ?,mtime = ? where id = id"
-        let stmtstr = jsonData["stmt"];
-        let values = jsonData["values"];
-
-        dataBase.transaction(function (tx) {
-            tx.executeSql(stmtstr, values,
-                function (tx, results) {
-                    if (window.Settings.enableLog)
-                        WebUtils.log("Database.stmt({0} - success.)".format(body));
-                    try {
-                        Database._fcnF(fcn, results.insertId);
-                    } catch (error) {
-                        Database._fcnF(fcn, true);
-                    }
-                },
-                function (tx, error) {
-                    if (window.Settings.enableLog)
-                        WebUtils.log("Database.stmt({0} - Error:{1})".format(body, error.message));
-                    Database._fcnF(fcn, null);
-                }
-            );
-        });
+        dataBase.stmt(body, fcn)
     }
 
     static _stmtBool(body, fcn) {
         if (window.Settings.enableLog)
             WebUtils.log("Database._stmtBool({0})".format(body));
-        let jsonData = JSON.parse(body);
-        //"update db set fieldname = ?,mtime = ? where id = id"
-        let stmtstr = jsonData["stmt"];
-        let values = jsonData["values"];
-
-        dataBase.transaction(function (tx) {
-            tx.executeSql(stmtstr, values,
-                function (tx, results) {
-                    if (window.Settings.enableLog)
-                        WebUtils.log("Database._stmtBool({0} - success.)".format(body));
-                    Database._fcnF(fcn, true);
-                },
-                function (tx, error) {
-                    if (window.Settings.enableLog)
-                        WebUtils.log("Database._stmtBool({0} - Error:{1})".format(body, error.message));
-                    Database._fcnF(fcn, false);
-                }
-            );
-        });
+        dataBase._stmtBool(body, fcn);
     }
 
     //{"stmt":"select name,thumbnail,id,isgift from projects where deleted = ? AND version = ? AND gallery IS NULL order by ctime desc",
@@ -135,30 +67,7 @@ export default class Database {
     static _queryData(body, fcn) {
         if (window.Settings.enableLog)
             WebUtils.log("Database.queryData({0})".format(body));
-        let jsonData = JSON.parse(body);
-        let stmtstr = jsonData["stmt"];
-        let values = jsonData["values"];
-        dataBase.transaction(function (tx) {
-            tx.executeSql(stmtstr, values,
-                function (tx, results) {
-                    if (window.Settings.enableLog)
-                        WebUtils.log("Database.queryData({0} - success.)".format(body));
-                    let resArray = [];
-                    let len = results.rows.length;
-                    for (let i = 0; i < len; i++) {
-                        let rowData = results.rows.item(i);
-                        if (window.Settings.enableLog)
-                            WebUtils.log("Database.queryData() - results:{0})".format(JSON.stringify(rowData)));
-                        resArray.push(rowData);
-                    }
-                    Database._fcnF(fcn, resArray);
-                },
-                function (tx, error) {
-                    if (window.Settings.enableLog)
-                        WebUtils.log("Database.queryData({0} - Error:{1})".format(body, error.message));
-                    Database._fcnF(fcn, null);
-                });
-        });
+        dataBase._queryData(body, fcn);
     }
 
     static _findDataIn(stmtstr, values, fcn) {
@@ -169,38 +78,10 @@ export default class Database {
     }
 
     //--------------test--------------------------
-    static _setfield(db, id, fieldname, val, fcn) {
-        var json = {};
-        var keylist = [fieldname + ' = ?', ];
-        json.values = [val];
-        json.stmt = 'update ' + db + ' set ' + keylist.toString() + ' where id = ' + id;
-        return Database._stmtBool(JSON.stringify(json), fcn);
-    }
-
     static test() {
         if (window.Settings.enableLog)
             WebUtils.log("Database.test()");
-        dataBase.transaction(function (tx) {
-            tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)');
-            tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "foobar")');
-            tx.executeSql('INSERT INTO LOGS (id, log) VALUES (2, "logmsg")');
-        });
-
-        Database._setfield("LOGS", 1, "log", "--foobar2--");
-        // dataBase.transaction(function (tx) {
-        //     tx.executeSql('SELECT * FROM LOGS', [], function (tx, results) {
-        //         let len = results.rows.length;
-        //         for (let i = 0; i < len; i++) {
-        //             let rowData = results.rows.item(i);
-        //             WebUtils.log("Database.test() - id:{0},log:{1}".format(rowData.id, rowData.log));
-        //         }
-        //     }, null);
-        // });
-
-        let queryJson = {};
-        queryJson["stmt"] = "select log from LOGS where id = ?";
-        queryJson["values"] = [1];
-        Database.query(JSON.stringify(queryJson));
+        dataBase.test();
     }
 
     //----------File--------------
@@ -210,7 +91,7 @@ export default class Database {
 
     static _getAllFiles(fcn) {
         let queryJson = {};
-        queryJson["stmt"] = "SELECT NAME FROM USERFILES";
+        queryJson["stmt"] = "select name from userfiles";
         queryJson["values"] = [];
         Database._queryData(JSON.stringify(queryJson), function (listUserFiles) {
             let allFiles = [];
@@ -222,7 +103,7 @@ export default class Database {
             let dictData = null;
             for (let i = 0; i < listUserFiles.length; i++) {
                 dictData = listUserFiles[i];
-                allFiles.push(dictData.NAME);
+                allFiles.push(dictData.name);
             }
             Database._fcnF(fcn, allFiles);
         });
@@ -257,9 +138,10 @@ export default class Database {
         Database._hasFile(url, function (bHas) {
             let queryJson = {};
             if (bHas)
-                queryJson["stmt"] = "UPDATE USERFILES SET CONTEXT = ? WHERE NAME = ?";
+                queryJson["stmt"] = "update userfiles set context = ? where name = ?";
             else
-                queryJson["stmt"] = "INSERT INTO USERFILES (CONTEXT,NAME) VALUES (?, ?)";
+                queryJson["stmt"] = "insert into userfiles (context,name) values (?, ?)";
+                
             queryJson["values"] = [plaindata, url];
             Database._stmtBool(JSON.stringify(queryJson), function (ok) {
                 let re = (!ok) ? "-1" : url;
@@ -278,7 +160,7 @@ export default class Database {
             }
 
             let queryJson = {};
-            queryJson["stmt"] = "SELECT CONTEXT FROM USERFILES WHERE NAME = ?";
+            queryJson["stmt"] = "select context from userfiles where name = ?";
             queryJson["values"] = [url];
             Database._queryData(JSON.stringify(queryJson), function (listData) {
                 if (listData == null) {
@@ -289,7 +171,7 @@ export default class Database {
                     return;
                 }
 
-                let strContent = listData[0].CONTEXT;
+                let strContent = listData[0].context;
                 Database._fcnF(fcn, strContent);
             });
         });
@@ -305,21 +187,21 @@ export default class Database {
         let key = Database.getMD5(contents);
         let md5 = "{0}.{1}".format(key, ext);
         if (window.Settings.enableLog)
-            WebUtils.log("Database.setmedia({0}) - {1}".format(ext,md5));
+            WebUtils.log("Database.setmedia({0}) - {1}".format(ext, md5));
         Database._writeToURL(md5, contents, fcn);
     }
 
     static getmedia(filename, fcn) {
         if (window.Settings.enableLog)
             WebUtils.log("Database.getmedia({0})".format(filename));
-            let url = Database._getDocumentPath(filename);
-            Database._initWithContentsOfURL(url, function (data) {
-                if (data == null) {
-                    Database._fcnF(fcn, null);
-                    return;
-                }
-                Database._fcnF(fcn, data);
-            });
+        let url = Database._getDocumentPath(filename);
+        Database._initWithContentsOfURL(url, function (data) {
+            if (data == null) {
+                Database._fcnF(fcn, null);
+                return;
+            }
+            Database._fcnF(fcn, data);
+        });
     }
 
     static getMD5(str) {
@@ -338,7 +220,7 @@ export default class Database {
             }
 
             let queryJson = {};
-            queryJson["stmt"] = "DELETE FROM USERFILES WHERE NAME = ?";
+            queryJson["stmt"] = "delete from userfiles where name = ?";
             queryJson["values"] = [str];
             Database._stmtBool(JSON.stringify(queryJson), function (ok) {
                 Database._fcnF(fcn, ok);
@@ -350,7 +232,7 @@ export default class Database {
         if (window.Settings.enableLog)
             WebUtils.log("Database.removeAllFiles()");
         let queryJson = {};
-        queryJson["stmt"] = "DELETE FROM USERFILES";
+        queryJson["stmt"] = "delete from userfiles";
         queryJson["values"] = [];
         Database._stmtBool(JSON.stringify(queryJson), function (ok) {
             Database._fcnF(fcn, ok);

@@ -177,7 +177,9 @@ export default class IO {
         }
         return res;
     }
-    static getImageDataURL (md5, data) {
+    static getImageDataURL(md5, data) {
+        if (data == null)
+            console.log("Error: getImageDataURL(" + md5 + ",null) -- Not exist.");
         var header = '';
         switch (IO.getExtension(md5)) {
         case 'svg': header = 'data:image/svg+xml;base64,';
@@ -265,7 +267,7 @@ export default class IO {
         json.values = [obj.version, obj.deleted, obj.name, JSON.stringify(obj.json),
             JSON.stringify(obj.thumbnail), (new Date()).getTime().toString()];
         json.stmt = 'update ' + database + ' set ' + keylist.toString() + ' where id = ' + obj.id;
-        console.log("saveProject:"+JSON.stringify(json));
+        // console.log("saveProject:"+JSON.stringify(json));
         OS.stmt(json, fcn);
     }
 
@@ -369,8 +371,8 @@ export default class IO {
                 }
             }
 
-            console.log("projectMetadata");
-            console.log(projectMetadata);
+            //console.log("projectMetadata");
+            //console.log(projectMetadata);
 
             // Get the media in projectMetadata and add it to a zip file
             zipFile = new JSZip();

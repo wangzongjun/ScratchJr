@@ -14,13 +14,11 @@ String.prototype.format = function () {
 
 export default class Web {
     static init() {
-        Database.open("ScratchJrTest");
-        // Database.test();
+        Database.open("Guest");
         SoundPlayer.init(function (nRe) {
             if (nRe == 0)
                 RecordSound.loadAllSound()
         });
-        // WebUtils.test()
     }
 
     static database_stmt(json, fcn) {
@@ -40,7 +38,7 @@ export default class Web {
             WebUtils.log("Web.io_cleanassets({0})".format(fileType));
         Database.cleanassets(fileType, fcn);
     }
-    
+
     static io_getsettings() {
         if (window.Settings.enableLog)
             WebUtils.log("Web.io_getsettings()");
@@ -151,15 +149,15 @@ export default class Web {
     }
 
     static scratchjr_cameracheck() {
-        WebUtils.log("scratchjr_cameracheck()");
+        WebUtils.log("Web.scratchjr_cameracheck()");
     }
 
     static scratchjr_startfeed(str) {
-        WebUtils.log("scratchjr_startfeed({0})".format(str));
+        WebUtils.log("Web.scratchjr_startfeed({0})".format(str));
     }
 
     static scratchjr_stopfeed() {
-        WebUtils.log("scratchjr_stopfeed()");
+        WebUtils.log("Web.scratchjr_stopfeed()");
     }
 
     static scratchjr_choosecamera(body) {
@@ -171,7 +169,7 @@ export default class Web {
     }
 
     static hideSplash() {
-        WebUtils.log("Web.hideSplash()".format());
+        WebUtils.log("Web.hideSplash()");
     }
 
     static sendSjrUsingShareDialog(fileName, emailSubject, emailBody, shareType, b64data) {
