@@ -42,5 +42,5 @@
         "繁體中文": "zh-tw"
     },
     "settingsPageDisabled": false,
-    "enableLog":true
+    "enableLog":false
 }
