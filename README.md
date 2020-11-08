@@ -34,3 +34,38 @@ ScratchJr是Scratch官方提供的面向5-7岁儿童，学习Scratch的入门工
 
 在**OS.waitForInterface()**中获取平台相关信息，调用对应的平台。
 
+## 使用
+
+### window.JrConfig对象
+
+scratchJr的配置，需要载入编辑器之前完成
+
+```js
+window.JrConfig = {
+    //点击保存到云端按钮
+    onSaveCloud: function(contents, name){
+        //contents: sjr项目文件
+        //name: 作品名称
+    }
+}
+
+```
+
+### window.ScratchJr对象
+
+scratchjr对外暴露的接口
+
+```js
+//获取作品文件
+window.ScratchJr.getProjectSjr((contents, name)=>{
+    //contents: sjr项目文件
+    //name: 作品名称
+});
+//获取作品封面
+window.ScratchJr.getProjectCover((cover)=>{
+    //cover：base64封面
+});
+
+//从URL加载sjr项目文件
+window.ScratchJr.loadProjectSjr(url);
+```
