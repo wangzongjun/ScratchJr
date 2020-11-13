@@ -24,7 +24,7 @@ ScratchJr是Scratch官方提供的面向5-7岁儿童，学习Scratch的入门工
 
 1. **事件点击**：官方版本点击事件使用的是ontouchstart/ontouchmove/ontouchend，网页版本在此基础上增加了onmousedown/onmousemove/onmouseup，详细修改见 utils/lib.js
 2. **数据存储**：官方调用的是iOS 和 Andorid底层的API，iOS主要是sqlite数据库接口，网页版本使用[localForage](https://github.com/localForage/localForage)实现数据存储功能。
-3. **录音/录制视频、声音播放功能**：官方调用的是iOS 和 Andorid底层的API，网页版本使用recordrtc实现录制功能，使用soundmanager2实现声音播放功能，详细说明见tablet\Web.js；
+3. **录音/录制视频、声音播放功能**：官方调用的是iOS 和 Andorid底层的API，网页版本使用[recordrtc](https://github.com/muaz-khan/RecordRTC)实现录制功能，使用[soundmanager2](https://github.com/scottschiller/SoundManager2)实现声音播放功能，详细说明见tablet\Web.js；
 
 
 **tablet底层接口简要说明，目前包括三个平台：**
