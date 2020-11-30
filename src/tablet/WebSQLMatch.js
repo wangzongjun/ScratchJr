@@ -26,7 +26,7 @@ class SQLSelect extends SQLMatch {
     }
 
     match(strSQL, values) {
-        let patt1 = /select[\s+\n+]+([a-zA-Z,\*]*)+[\s+\n+]+from+[\s+\n+]+([a-zA-Z,]*)/;
+        let patt1 = /select[\s+\n+]+([a-zA-Z0-9,\*]*)+[\s+\n+]+from+[\s+\n+]+([a-zA-Z0-9,]*)/;
         let arr = strSQL.match(patt1);
         if (arr == null || arr.length < 3)
             return null;
@@ -188,7 +188,7 @@ class SQLWhere extends SQLMatchCond {
     }
 
     getRegexp() {
-        return /[\s]*([a-zA-Z]+)[\s]*=[\s]([\?|\S]*)/g;
+        return /[\s]*([a-zA-Z0-9]+)[\s]*=[\s]([\?|\S]*)/g;
     }
 }
 
@@ -199,7 +199,7 @@ class SQLOrderBy extends SQLMatchCond {
     }
 
     getRegexp() {
-        return /[\s]*([a-zA-Z]+)[\s]*(desc|asc)/g;
+        return /[\s]*([a-zA-Z0-9]+)[\s]*(desc|asc)/g;
     }
 }
 
@@ -210,7 +210,7 @@ class SQLSet extends SQLMatchCond {
     }
 
     getRegexp() {
-        return /[\s]*([a-zA-Z]+)[\s]*=[\s]([\?|[\S]]*)/g;
+        return /[\s]*([a-zA-Z0-9]+)[\s]*=[\s]([\?|[\S]]*)/g;
     }
 }
 
