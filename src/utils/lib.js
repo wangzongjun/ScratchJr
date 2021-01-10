@@ -1,7 +1,8 @@
+import Devices from './Devices';
 export var frame;
 // XXX: isTablet is legacy code that can be used to detect if we're running on a desktop browser
 // There are references to it throughout the codebase, should possibly be removed at some point
-export const isTablet = false;//(window.orientation != 'undefined');
+// export const isTablet = false;//(window.orientation != 'undefined');
 export const DEGTOR = Math.PI / 180;
 export const WINDOW_INNER_HEIGHT = window.innerHeight;
 export const WINDOW_INNER_WIDTH = window.innerWidth;
@@ -11,6 +12,11 @@ export const fullscreenScaleMultiplier = 136;
 console.log('setting OS flags');
 export const isiOS = (typeof AndroidInterface == 'undefined');
 export const isAndroid = (typeof AndroidInterface != 'undefined');
+
+export const isTablet = function() {
+    return Devices.tablet() || Devices.mobile();
+}();
+
 
 export function libInit () {
     frame = document.getElementById('frame');
