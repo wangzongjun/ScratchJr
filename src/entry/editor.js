@@ -16,5 +16,8 @@ export function editorMain () {
             Camera.available = list[3] == 'YES' ? true : false;
         }
         ScratchJr.appinit(window.Settings.scratchJrVersion);
+        document.oncontextmenu = function(){
+            event.returnValue = false;
+        }
     }
 }
