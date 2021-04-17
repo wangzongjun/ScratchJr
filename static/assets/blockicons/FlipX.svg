@@ -6,14 +6,14 @@
 	.st0{fill:#FFFFFF;stroke:#376A7A;stroke-width:2;stroke-miterlimit:10;}
 </style>
 <g>
-	<rect x="86.1" y="63" class="st0" width="8" height="8"/>
-	<rect x="86.1" y="74" class="st0" width="8" height="8"/>
-	<rect x="86.1" y="85.2" class="st0" width="8" height="8"/>
-	<rect x="86.1" y="96.1" class="st0" width="8" height="8"/>
-	<rect x="86.1" y="107" class="st0" width="8" height="8"/>
+	<rect x="86.1" y="53" class="st0" width="8" height="8"/>
+	<rect x="86.1" y="64" class="st0" width="8" height="8"/>
+	<rect x="86.1" y="75.2" class="st0" width="8" height="8"/>
+	<rect x="86.1" y="86.1" class="st0" width="8" height="8"/>
+	<rect x="86.1" y="97" class="st0" width="8" height="8"/>
 </g>
-<path class="st0" d="M77.1,91.7l-27.9,20.7c-1.5,1.2-3.7,0-3.7-1.9V69.1c0-1.9,2.2-3,3.7-1.9l27.9,20.7
-	C78.3,88.9,78.3,90.7,77.1,91.7z"/>
-<path class="st0" d="M102.9,91.7l27.9,20.7c1.5,1.2,3.7,0,3.7-1.9V69.1c0-1.9-2.2-3-3.7-1.9l-27.9,20.7
-	C101.7,88.9,101.7,90.7,102.9,91.7z"/>
+<path class="st0" d="M77.1,81.7l-27.9,20.7c-1.5,1.2-3.7,0-3.7-1.9V59.1c0-1.9,2.2-3,3.7-1.9l27.9,20.7
+	C78.3,78.9,78.3,80.7,77.1,81.7z"/>
+<path class="st0" d="M102.9,81.7l27.9,20.7c1.5,1.2,3.7,0,3.7-1.9V59.1c0-1.9-2.2-3-3.7-1.9l-27.9,20.7
+	C101.7,78.9,101.7,80.7,102.9,81.7z"/>
 </svg>
