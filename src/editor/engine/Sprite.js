@@ -254,7 +254,7 @@ export default class Sprite {
         this.setPos(this.homex, this.homey);
         this.scale = this.homescale;
         this.shown = this.homeshown;
-        //	this.flip = this.homeflip;  // kept here just in case we want it
+        this.flip = this.homeflip;  // kept here just in case we want it
         this.div.style.opacity = this.shown ? 1 : 0;
         this.setHeading(0);
         this.render();
