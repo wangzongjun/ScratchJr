@@ -174,5 +174,6 @@
         {"md5":"Boat2.svg","width":488,"height":425,"ext":"svg","name":"Boat","order":"characters,10 transportation","tags":["characters","10 transportation"]},
         {"md5":"Rocket.svg","width":254,"height":495,"ext":"svg","name":"Rocket","order":"characters,10 transportation","tags":["characters","10 transportation"]}
     ],
-    "sounds": ["pop.mp3"]
+    "soundspath": "./assets/sound/",
+    "sounds": ["pop.mp3","接收.mp3"]
 }

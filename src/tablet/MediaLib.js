@@ -6,6 +6,7 @@ let samples;
 let backgrounds;
 let sprites;
 let sounds;
+let soundspath;
 let keys = {};
 
 export default class MediaLib {
@@ -29,6 +30,10 @@ export default class MediaLib {
         return sounds;
     }
 
+    static get soundspath () {
+        return soundspath;
+    }
+
     static get keys () {
         return keys;
     }
@@ -41,6 +46,7 @@ export default class MediaLib {
             sprites = parsedResult.sprites;
             backgrounds = parsedResult.backgrounds;
             sounds = parsedResult.sounds;
+            soundspath = parsedResult.soundspath;
 
             MediaLib.localizeMediaNames();
             MediaLib.generateKeys();
