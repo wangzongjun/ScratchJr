@@ -429,7 +429,7 @@ export default class Palette {
             newb.lift();
             dx += betweenblocks;
         }
-        if ((list.length < 6) && Record.available && newb) {
+        if ((list.length < 10) && Record.available && newb) {
             Palette.drawRecordSound(newb.div.offsetWidth, newb.div.offsetHeight, dx);
         }
     }
