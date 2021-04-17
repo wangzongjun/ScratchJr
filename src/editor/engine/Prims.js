@@ -28,6 +28,7 @@ export default class Prims {
         Prims.table.down = Prims.Down;
         Prims.table.left = Prims.Left;
         Prims.table.right = Prims.Right;
+        Prims.table.flipX = Prims.FlipX;
         Prims.table.home = Prims.Home;
         Prims.table.setspeed = Prims.SetSpeed;
         Prims.table.message = Prims.Message;
@@ -192,6 +193,13 @@ export default class Prims {
         var n = strip.thisblock.getArgValue();
         strip.waitTimer = Math.round(n * 3.125); // thenth of a second
         Prims.setTime(strip);
+        strip.thisblock = strip.thisblock.next;
+    }
+
+    static FlipX(strip){
+        var spr = strip.spr;
+        spr.flipX();
+        strip.waitTimer = tinterval;
         strip.thisblock = strip.thisblock.next;
     }
 

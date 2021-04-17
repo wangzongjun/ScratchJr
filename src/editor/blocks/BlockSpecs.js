@@ -176,7 +176,7 @@ export default class BlockSpecs {
 
     static setupPalettesDef () {
         return [['onflag', 'onclick', 'ontouch', 'onmessage', 'message'],
-            ['forward', 'back', 'up', 'down', 'right', 'left', 'hop', 'home'],
+            ['forward', 'back', 'up', 'down', 'right', 'left','flipX', 'hop', 'home'],
             ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show'],
             [],
             ['wait', 'stopmine', 'setspeed', 'repeat'],
@@ -228,6 +228,8 @@ export default class BlockSpecs {
                 BlockSpecs.blueCmd, 'n', 1, BlockSpecs.blueCmdH, -12, 12, BlockSpecs.cmdS],
             'left': ['left', BlockSpecs.getImageFrom('assets/blockicons/Left', 'svg'),
                 BlockSpecs.blueCmd, 'n', 1, BlockSpecs.blueCmdH, -12, 12, BlockSpecs.cmdS],
+            'flipX': ['flipX', BlockSpecs.getImageFrom('assets/blockicons/FlipX', 'svg'),
+                BlockSpecs.blueCmd, null, null, BlockSpecs.blueCmdH, null, null, BlockSpecs.cmdS],
             'home': ['home', BlockSpecs.getImageFrom('assets/blockicons/Home', 'svg'),
                 BlockSpecs.blueCmd, null, null, BlockSpecs.blueCmdH, null, null, BlockSpecs.cmdS],
             'hop': ['hop', BlockSpecs.getImageFrom('assets/blockicons/Hop', 'svg'),
@@ -299,6 +301,7 @@ export default class BlockSpecs {
             'home': Localization.localize('BLOCK_DESC_GO_HOME'),
             'left': Localization.localize('BLOCK_DESC_TURN_LEFT'),
             'right': Localization.localize('BLOCK_DESC_TURN_RIGHT'),
+            'flipX':"水平镜像",
             'hop': Localization.localize('BLOCK_DESC_HOP'),
             'wait': Localization.localize('BLOCK_DESC_WAIT'),
             'setspeed': Localization.localize('BLOCK_DESC_SET_SPEED'),

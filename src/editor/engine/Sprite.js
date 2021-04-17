@@ -245,6 +245,11 @@ export default class Sprite {
     // sprite Primitives
     //////////////////////////////////////////////////////////////////////////////
 
+    flipX () {
+        this.flip = !this.flip;
+        this.render();
+    }
+
     goHome () {
         this.setPos(this.homex, this.homey);
         this.scale = this.homescale;
