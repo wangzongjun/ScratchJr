@@ -177,10 +177,15 @@ export default class Library {
         if (data.length < 1) {
             return;
         }
+        let nullOrder = [];
         var order = data[0].order;
         var key = order ? order.split(',')[1] : '';
         for (var i = 0; i < data.length; i++) {
             order = data[i].order;
+            if (order == null) {
+                nullOrder.push(data[i]);
+                continue;
+            }
             var key2 = order ? order.split(',')[1] : '';
             if (key2 != key) {
                 Library.addHR(div);
@@ -192,6 +197,11 @@ export default class Library {
                 Library.addLocalThumbChoose(div, data[i], 120 * scaleMultiplier,
                     90 * scaleMultiplier, Library.selectAsset);
             }
+        }
+
+        for (var i = 0; i < nullOrder.length; i++) {
+            Library.addLocalThumbChoose(div, nullOrder[i], 120 * scaleMultiplier,
+                90 * scaleMultiplier, Library.selectAsset);
         }
     }
 
