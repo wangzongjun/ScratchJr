@@ -161,9 +161,13 @@ export default class Library {
     }
 
     static open(libType) {
+        let newType = type == libType ? true : false;
         type = libType;
-        libEx = new LibraryEx(null, null);
-        gn('assetname').textContent = '';
+        if (!newType) {
+            libEx = new LibraryEx(null, null);
+            gn('assetname').textContent = '';
+        }
+
         nativeJr = true;
         frame.style.display = 'none';
         libFrame.className = 'libframe appear';
@@ -171,9 +175,11 @@ export default class Library {
         selectedOne = undefined;
         let fun = (type == 'costumes') ? Library.closeSpriteSelection : Library.closeBkgSelection;
         onTouchStartBind(gn('okbut'), fun);
-        Library.clean();
-        Library.createScrollPanel();
-        Library.addThumbnails(type);
+        if (!newType) {
+            Library.clean();
+            Library.createScrollPanel();
+            Library.addThumbnails(type);
+        }
 
         onTouchStartBind(window, undefined);
         onTouchEndBind(window, undefined);
@@ -281,7 +287,7 @@ export default class Library {
         if (data.length > 0) {
             libEx.userData = data;
             Library.addUserData();
-        }else{
+        } else {
             Library.addHR(div);
         }
         let libData = libEx.open(type);
