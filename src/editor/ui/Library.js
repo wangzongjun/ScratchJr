@@ -28,6 +28,7 @@ let shaking;
 let type;
 let timeoutEvent;
 let libFrame;
+let libEx;
 
 export default class Library {
     static init() {
@@ -57,20 +58,19 @@ export default class Library {
     static createClassification(inner) {
         var classification = newHTML('div', 'classification', inner);
         classification.setAttribute('id', 'classification');
-        let libEx = new LibraryEx();
-        var costumesArr = libEx.getCategory('costumes');
-        console.log('costumesArr',costumesArr)
-        for( var i = 0; i < costumesArr.length; i++){
+        var costumesArr = libEx.getCategory(type);
+        // console.log('costumesArr',costumesArr)
+        for (var i = 0; i < costumesArr.length; i++) {
             var item = newHTML('div', 'classification-item', classification);
             item.textContent = costumesArr[i].category;
-            item.setAttribute('info',JSON.stringify(costumesArr[i]));
-            if(i == 0){
+            item.setAttribute('info', JSON.stringify(costumesArr[i]));
+            if (i == 0) {
                 item.className = 'classification-item classification-active';
             }
         }
         var classificationItemArr = document.getElementsByClassName('classification-item');
-        for( var i = 0; i < classificationItemArr.length; i++){
-            onTouchStartBind(classificationItemArr[i],function(item){
+        for (var i = 0; i < classificationItemArr.length; i++) {
+            onTouchStartBind(classificationItemArr[i], function (item) {
                 for (var k = 0; k < classificationItemArr.length; k++) {
                     classificationItemArr[k].className = 'classification-item';
                 }
@@ -78,8 +78,8 @@ export default class Library {
                 var obj = JSON.parse(this.getAttribute('info'))
                 var div = gn('scrollarea');
                 div.innerHTML = '';
-
-                let libEx = new LibraryEx();
+                if (obj.type == 1)
+                    Library.addUserData(div);
                 let data = libEx.open(type, obj);
                 Library.displayLibAssets(data)
             })
@@ -90,72 +90,71 @@ export default class Library {
         var search = newHTML('div', 'search', inner);
         search.setAttribute('id', 'search');
         var input = newHTML('input', 'search-input', search);
-        input.setAttribute('required','required');
-        input.setAttribute('id','search-input');
-        input.setAttribute('placeholder','请输入搜索的内容，多个内容使用空格分隔');
+        input.setAttribute('required', 'required');
+        input.setAttribute('id', 'search-input');
+        input.setAttribute('placeholder', '请输入搜索的内容，多个内容使用空格分隔');
         var a = newHTML('a', 'clear-input', search);
-        a.setAttribute('href','javascript:;');
-        a.setAttribute('id','clear');
+        a.setAttribute('href', 'javascript:;');
+        a.setAttribute('id', 'clear');
         var img = newHTML('img', 'clear-input-img', a);
-        img.src='assets/ui/clear.png';
+        img.src = 'assets/ui/clear.png';
         var btn = newHTML('div', 'search-btn', search);
-        btn.setAttribute('id','search-btn');
+        btn.setAttribute('id', 'search-btn');
         btn.textContent = '搜索';
-        let libEx = new LibraryEx();
-        var costumesArr = libEx.getCategory('costumes');
-        onTouchEndBind(gn('clear'),function(){
+        onTouchEndBind(gn('clear'), function () {
             gn('search-input').value = '';
             Library.resetType();
-            var data = libEx.seartch('costumes',costumesArr[0],'');
+            Library.addUserData();
+            var data = libEx.open(type);
             gn('scrollarea').innerHTML = '';
-            if(data.length){
-                console.log('data',data);
+            if (data.length) {
+                // console.log('data',data);
                 Library.displayLibAssets(data);
-                if(gn('noData')){
-                    setProps(noData.style,{
-                        display:'none'
+                if (gn('noData')) {
+                    setProps(noData.style, {
+                        display: 'none'
                     })
                 }
-            }else{
+            } else {
                 Library.createNodata();
             }
         })
 
-        onTouchEndBind(gn('search-btn'),function(){
+        onTouchEndBind(gn('search-btn'), function () {
             Library.resetType();
-            var data = libEx.seartch('costumes',costumesArr[0],gn('search-input').value);
+            var data = libEx.seartch(type, null, gn('search-input').value);
             gn('scrollarea').innerHTML = '';
-            if(data.length){
-                console.log('data',data);
+            if (data.length) {
+                console.log('data', data);
                 Library.displayLibAssets(data);
-                if(gn('noData')){
-                    setProps(noData.style,{
-                        display:'none'
+                if (gn('noData')) {
+                    setProps(noData.style, {
+                        display: 'none'
                     })
                 }
-            }else{
+            } else {
                 Library.createNodata();
             }
         })
     }
 
-    static createNodata(){
-        if(!gn('noData')){
+    static createNodata() {
+        if (!gn('noData')) {
             var noData = newHTML('p', 'noData', gn('scrollarea'));
-            noData.setAttribute('id','noData');
+            noData.setAttribute('id', 'noData');
             noData.textContent = '没有搜索到任何内容'
-        }    
-        
-        setProps(gn('noData').style,{
-            display:'block'
+        }
+
+        setProps(gn('noData').style, {
+            display: 'block'
         })
     }
     //重置type
     static resetType() {
         var classificationItemArr = document.getElementsByClassName('classification-item');
-        for( var i = 0; i < classificationItemArr.length; i++){
+        for (var i = 0; i < classificationItemArr.length; i++) {
             classificationItemArr[i].className = 'classification-item';
-            if(i == 0){
+            if (i == 0) {
                 classificationItemArr[i].className = 'classification-item classification-active';
             }
         }
@@ -163,6 +162,7 @@ export default class Library {
 
     static open(libType) {
         type = libType;
+        libEx = new LibraryEx(null, null);
         gn('assetname').textContent = '';
         nativeJr = true;
         frame.style.display = 'none';
@@ -231,8 +231,6 @@ export default class Library {
 
     static addThumbnails() {
         var div = gn('scrollarea');
-        Library.addEmptyThumb(div, (type == 'costumes') ? (118 * scaleMultiplier) : (120 * scaleMultiplier),
-            (type == 'costumes') ? (90 * scaleMultiplier) : (90 * scaleMultiplier));
         var key = (type == 'costumes') ? 'usershapes' : 'userbkgs';
         // Student' assets
         var json = {};
@@ -262,22 +260,32 @@ export default class Library {
         return pad;
     }
 
-    static displayAssets(str) {
+    static addUserData(div) {
+        if (libEx.userData == null)
+            return;
+        if (div == null)
+            div = gn('scrollarea');
+        Library.addEmptyThumb(div, (type == 'costumes') ? (118 * scaleMultiplier) : (120 * scaleMultiplier),
+            (type == 'costumes') ? (90 * scaleMultiplier) : (90 * scaleMultiplier));
         nativeJr = true;
-        var div = gn('scrollarea');
-        var data = JSON.parse(str);
-        if (data.length > 0) {
-            for (var i = 0; i < data.length; i++) {
-                Library.addAssetThumbChoose(div, data[i], 120 * scaleMultiplier, 90 * scaleMultiplier,
-                    Library.selectAsset);
-            }
+        for (var i = 0; i < libEx.userData.length; i++) {
+            Library.addAssetThumbChoose(div, libEx.userData[i], 120 * scaleMultiplier, 90 * scaleMultiplier, Library.selectAsset);
         }
         Library.addHR(div);
         nativeJr = false;
-        //data = (type == 'costumes') ? MediaLib.sprites : MediaLib.backgrounds;
-        let libEx = new LibraryEx();
-        data = libEx.open(type);
-        Library.displayLibAssets(data);
+    }
+
+    static displayAssets(str) {
+        var div = gn('scrollarea');
+        var data = JSON.parse(str);
+        if (data.length > 0) {
+            libEx.userData = data;
+            Library.addUserData();
+        }else{
+            Library.addHR(div);
+        }
+        let libData = libEx.open(type);
+        Library.displayLibAssets(libData);
     }
 
     static displayLibAssets(data, div) {
@@ -365,8 +373,9 @@ export default class Library {
         img.style.position = 'relative';
 
         // Cached downsized-thumbnails are in pnglibrary
-        var pngPath = MediaLib.path.replace('svg', 'png');
-        img.src = pngPath + IO.getFilename(md5) + '.png';
+        //var pngPath = MediaLib.path.replace('svg', 'png');
+        //img.src = pngPath + IO.getFilename(md5) + '.png';
+        img.src = MediaLib.path + md5;
 
         onTouchStartBind(tb, function (evt) {
             fcn(evt, tb);

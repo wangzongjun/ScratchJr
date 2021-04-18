@@ -10,35 +10,35 @@ let soundspath;
 let keys = {};
 
 export default class MediaLib {
-    static get path () {
+    static get path() {
         return path;
     }
 
-    static get samples () {
+    static get samples() {
         return samples;
     }
 
-    static get sprites () {
+    static get sprites() {
         return sprites;
     }
 
-    static get backgrounds () {
+    static get backgrounds() {
         return backgrounds;
     }
 
-    static get sounds () {
+    static get sounds() {
         return sounds;
     }
 
-    static get soundspath () {
+    static get soundspath() {
         return soundspath;
     }
 
-    static get keys () {
+    static get keys() {
         return keys;
     }
 
-    static loadMediaLib (root, whenDone) {
+    static loadMediaLib(root, whenDone) {
         IO.requestFromServer(root + 'media.json', (result) => {
             let parsedResult = JSON.parse(result);
             path = parsedResult.path;
@@ -55,10 +55,11 @@ export default class MediaLib {
         });
     }
 
-    static localizeMediaNames () {
+    static localizeMediaNames() {
         // Localize names of sprites
         for (let i = 0; i < sprites.length; i++) {
-            sprites[i].name = Localization.localize('CHARACTER_' + sprites[i].md5);
+            if (sprites[i].order != null)
+                sprites[i].name = Localization.localize('CHARACTER_' + sprites[i].md5);
         }
 
         // Localize names of backgrounds
@@ -67,15 +68,23 @@ export default class MediaLib {
         }
     }
 
-    static generateKeys () {
+    static generateKeys() {
         for (let i = 0; i < backgrounds.length; i++) {
             var bg = backgrounds[i];
-            keys[bg.md5] = {width: bg.width, height: bg.height, name: bg.name};
+            keys[bg.md5] = {
+                width: bg.width,
+                height: bg.height,
+                name: bg.name
+            };
         }
 
         for (let i = 0; i < sprites.length; i++) {
             var spr = sprites[i];
-            keys[spr.md5] = {width: spr.width, height: spr.height, name: spr.name};
+            keys[spr.md5] = {
+                width: spr.width,
+                height: spr.height,
+                name: spr.name
+            };
         }
     }
 }

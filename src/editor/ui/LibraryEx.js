@@ -5,10 +5,11 @@ import MediaLib from '../../tablet/MediaLib';
 // 	C.按照”关键字“搜索资源，并对每个搜索提供”评分“，按照分数的优先级排列
 
 export default class LibraryEx {
-	constructor(_MediaLib) {
+	constructor(_MediaLib, _userData) {
 		if (_MediaLib == null)
 			_MediaLib = MediaLib;
 		this.MediaLib = _MediaLib;
+		this.userData = _userData;
 	}
 
 	static listCategoryHas(listCategory, category) {
