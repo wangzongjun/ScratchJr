@@ -16,9 +16,9 @@ export default class LibraryEx {
 		for (var i = 0; i < listCategory.length; i++) {
 			dictData = listCategory[i];
 			if (dictData.category == category)
-				return false;
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 	//dictData = {name:"全部",type:1}
@@ -102,7 +102,7 @@ export default class LibraryEx {
 	}
 
 	static matchItem(itemData, keyWord) {
-		let listKeyWord = keyWord.split('，');
+		let listKeyWord = keyWord.split(' ');
 		let matchScore = -1;
 		for (let i = 0; i < listKeyWord.length; i++) {
 			let scoreCount = -1;
@@ -114,8 +114,10 @@ export default class LibraryEx {
 			scoreCount += scoreNow * 100;
 			scoreNow = LibraryEx.stringSearch(itemData.category, listKeyWord[i]);
 			scoreCount += scoreNow * 10;
-			if (scoreCount >= matchScore)
+			if (scoreCount > matchScore) {
 				matchScore = scoreCount;
+				//console.log(`LibraryEx.matchItem(${itemData.md5}) - ${scoreCount}`);
+			}
 		}
 		return matchScore;
 	}
@@ -129,8 +131,21 @@ export default class LibraryEx {
 		for (var i = 0; i < categoryData.length; i++) {
 			let matchScore = LibraryEx.matchItem(categoryData[i], keyWord);
 			if (matchScore > 0)
-				seartchData.push(matchScore);
+				seartchData.push(categoryData[i]);
 		}
 		return seartchData;
+	}
+
+	static test() {
+		let testType = "costumes";
+		let libEx = new LibraryEx();
+		let listCategory = libEx.getCategory(testType);
+		console.log(JSON.stringify(listCategory));
+
+		let data = libEx.open(testType, listCategory[listCategory.length - 1]);
+		console.log(JSON.stringify(data));
+
+		let dataSeartch = libEx.seartch(testType, listCategory[0], "plant island cactus");
+		console.log(JSON.stringify(dataSeartch));
 	}
 }

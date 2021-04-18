@@ -35,6 +35,7 @@ export default class Library {
         libFrame.style.minHeight = Math.max(getDocumentHeight(), frame.offsetHeight) + 'px';
         var topbar = newHTML('div', 'topbar', libFrame);
         topbar.setAttribute('id', 'topbar');
+        Library.createSearch(topbar);
         var actions = newHTML('div', 'actions', topbar);
         actions.setAttribute('id', 'libactions');
         var ascontainer = newHTML('div', 'assetname-container', topbar);
@@ -48,8 +49,116 @@ export default class Library {
     static createScrollPanel() {
         var inner = newHTML('div', 'innerlibrary', libFrame);
         inner.setAttribute('id', 'asssetsview');
+        Library.createClassification(inner);
         var div = newHTML('div', 'scrollarea', inner);
         div.setAttribute('id', 'scrollarea');
+    }
+
+    static createClassification(inner) {
+        var classification = newHTML('div', 'classification', inner);
+        classification.setAttribute('id', 'classification');
+        let libEx = new LibraryEx();
+        var costumesArr = libEx.getCategory('costumes');
+        console.log('costumesArr',costumesArr)
+        for( var i = 0; i < costumesArr.length; i++){
+            var item = newHTML('div', 'classification-item', classification);
+            item.textContent = costumesArr[i].category;
+            item.setAttribute('info',JSON.stringify(costumesArr[i]));
+            if(i == 0){
+                item.className = 'classification-item classification-active';
+            }
+        }
+        var classificationItemArr = document.getElementsByClassName('classification-item');
+        for( var i = 0; i < classificationItemArr.length; i++){
+            onTouchStartBind(classificationItemArr[i],function(item){
+                for (var k = 0; k < classificationItemArr.length; k++) {
+                    classificationItemArr[k].className = 'classification-item';
+                }
+                this.className = 'classification-item classification-active';
+                var obj = JSON.parse(this.getAttribute('info'))
+                var div = gn('scrollarea');
+                div.innerHTML = '';
+
+                let libEx = new LibraryEx();
+                let data = libEx.open(type, obj);
+                Library.displayLibAssets(data)
+            })
+        }
+    }
+
+    static createSearch(inner) {
+        var search = newHTML('div', 'search', inner);
+        search.setAttribute('id', 'search');
+        var input = newHTML('input', 'search-input', search);
+        input.setAttribute('required','required');
+        input.setAttribute('id','search-input');
+        input.setAttribute('placeholder','请输入搜索的内容，多个内容使用空格分隔');
+        var a = newHTML('a', 'clear-input', search);
+        a.setAttribute('href','javascript:;');
+        a.setAttribute('id','clear');
+        var img = newHTML('img', 'clear-input-img', a);
+        img.src='assets/ui/clear.png';
+        var btn = newHTML('div', 'search-btn', search);
+        btn.setAttribute('id','search-btn');
+        btn.textContent = '搜索';
+        let libEx = new LibraryEx();
+        var costumesArr = libEx.getCategory('costumes');
+        onTouchEndBind(gn('clear'),function(){
+            gn('search-input').value = '';
+            Library.resetType();
+            var data = libEx.seartch('costumes',costumesArr[0],'');
+            gn('scrollarea').innerHTML = '';
+            if(data.length){
+                console.log('data',data);
+                Library.displayLibAssets(data);
+                if(gn('noData')){
+                    setProps(noData.style,{
+                        display:'none'
+                    })
+                }
+            }else{
+                Library.createNodata();
+            }
+        })
+
+        onTouchEndBind(gn('search-btn'),function(){
+            Library.resetType();
+            var data = libEx.seartch('costumes',costumesArr[0],gn('search-input').value);
+            gn('scrollarea').innerHTML = '';
+            if(data.length){
+                console.log('data',data);
+                Library.displayLibAssets(data);
+                if(gn('noData')){
+                    setProps(noData.style,{
+                        display:'none'
+                    })
+                }
+            }else{
+                Library.createNodata();
+            }
+        })
+    }
+
+    static createNodata(){
+        if(!gn('noData')){
+            var noData = newHTML('p', 'noData', gn('scrollarea'));
+            noData.setAttribute('id','noData');
+            noData.textContent = '没有搜索到任何内容'
+        }    
+        
+        setProps(gn('noData').style,{
+            display:'block'
+        })
+    }
+    //重置type
+    static resetType() {
+        var classificationItemArr = document.getElementsByClassName('classification-item');
+        for( var i = 0; i < classificationItemArr.length; i++){
+            classificationItemArr[i].className = 'classification-item';
+            if(i == 0){
+                classificationItemArr[i].className = 'classification-item classification-active';
+            }
+        }
     }
 
     static open(libType) {
