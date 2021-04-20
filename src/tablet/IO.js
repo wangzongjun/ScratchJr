@@ -57,6 +57,24 @@ export default class IO {
         }
     }
 
+    static requestFromServerNoCache (url, whenDone) {
+        var xmlrequest = new XMLHttpRequest();
+        xmlrequest.addEventListener('error', transferFailed, false);
+        xmlrequest.onreadystatechange = function () {
+            if (xmlrequest.readyState == 4) {
+                whenDone(xmlrequest.responseText);
+            }
+        };
+        xmlrequest.open('GET', url, true);
+        xmlrequest.setRequestHeader('Cache-Control', 'no-cache');
+        xmlrequest.send(null);
+        function transferFailed (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Failed loading
+        }
+    }
+
     static getThumbnail (str, w, h, destw, desth) {
         str = str.replace(/>\s*</g, '><');
         var xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
