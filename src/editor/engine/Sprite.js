@@ -77,7 +77,7 @@ export default class Sprite {
             if (MediaLib.sounds.indexOf(this.sounds[i]) < 0)
                 ScratchAudio.loadProjectSound(this.sounds[i]);
             else
-                ScratchAudio.loadFromLocal(MediaLib.soundspath,this.sounds[i]);
+                ScratchAudio.loadFromLocal(MediaLib.soundspath, this.sounds[i]);
         }
         var sprites = JSON.parse(page.sprites);
         sprites.push(this.id);
@@ -85,10 +85,22 @@ export default class Sprite {
         var me = this;
         page.div.appendChild(this.div);
         this.div.style.visibility = 'hidden';
-        this.getAsset(gotImage); // sets the SVG and the image
-        function gotImage(dataurl) {
-            me.setCostume(dataurl, fcn);
+        if (md5.endsWith(".png")) {
+            var md5 = this.md5;
+            md5 = (MediaLib.keys[md5]) ? MediaLib.path + md5 : md5;
+            me.setCostume(md5, fcn);
+        } else {
+            this.getAsset(gotImage); // sets the SVG and the image
+            function gotImage(dataurl) {
+                me.setCostume(dataurl, fcn);
+            }
         }
+    }
+
+    pngPath(){
+        var md5 = this.md5;
+        md5 = (MediaLib.keys[md5]) ? MediaLib.path + md5 : md5;
+        return md5;
     }
 
     getAsset(whenDone) {
@@ -162,9 +174,11 @@ export default class Sprite {
     doRender(whenDone) {
         this.drawBorder(); // canvas draw border
         this.render();
-        SVG2Canvas.drawInCanvas(this); // canvas draws mask for pixel detection
-        this.readOnly = SVG2Canvas.svgerror;
-        this.watermark = SVGTools.getWatermark(this.svg, '#B3B3B3'); // svg for watermark
+        if(this.svg != null){
+            SVG2Canvas.drawInCanvas(this); // canvas draws mask for pixel detection
+            this.readOnly = SVG2Canvas.svgerror;
+            this.watermark = SVGTools.getWatermark(this.svg, '#B3B3B3'); // svg for watermark
+        }
         if (whenDone) {
             whenDone(this);
         }
@@ -172,6 +186,8 @@ export default class Sprite {
 
     drawBorder() {
         // TODO: Merge these to get better thumbnail rendering on iOS
+        if(this.svg == null)
+            return;
         var w, h, extxml;
         if (isAndroid) {
             this.border = document.createElement('canvas');
@@ -250,7 +266,8 @@ export default class Sprite {
         var ih = Math.floor(scale * imgh);
         var ix = Math.floor((w - (scale * imgw)) / 2);
         var iy = Math.floor((h - (scale * imgh)) / 2);
-        ctx.drawImage(this.border, 0, 0, this.border.width, this.border.height, ix, iy, iw, ih);
+        if(this.border != null)
+            ctx.drawImage(this.border, 0, 0, this.border.width, this.border.height, ix, iy, iw, ih);
         if (!img.complete) {
             img.onload = function () {
                 ctx.drawImage(img, 0, 0, imgw, imgh, ix, iy, iw, ih);
@@ -991,9 +1008,13 @@ export default class Sprite {
 
     getSVGimage(svg) {
         var img = document.createElement('img');
-        var str = (new XMLSerializer()).serializeToString(svg);
-        str = str.replace(/ href="data:image/g, ' xlink:href="data:image');
-        img.src = 'data:image/svg+xml;base64,' + btoa(str);
+        if(this.svg != null){
+            var str = (new XMLSerializer()).serializeToString(svg);
+            str = str.replace(/ href="data:image/g, ' xlink:href="data:image');
+            img.src = 'data:image/svg+xml;base64,' + btoa(str);
+        }else{
+            img.src = this.pngPath();
+        }
         return img;
     }
 
