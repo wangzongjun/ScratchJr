@@ -494,7 +494,7 @@ export default class Page {
             speed: 2,
             dirx: 1,
             diry: 1,
-            sounds: ['pop.mp3'],
+            sounds: MediaLib.sounds,
             homex: 240,
             homescale: scale,
             homey: 180,

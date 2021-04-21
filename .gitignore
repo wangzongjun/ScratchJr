@@ -1,2 +1,6 @@
 npm-*
 node_modules
+static/favicon.ico
+static/.htaccess
+static/.user.ini
+static/404.html
