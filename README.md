@@ -13,9 +13,9 @@ ScratchJr是Scratch官方提供的面向5-7岁儿童，学习Scratch的入门工
 1. 角色和背景支持自定义[添加、删除、搜索、编辑]以及分类，使用说明请查看网页“mediaHelp.html”
 2. 增加新积木块：水平镜像
 3. 配置音效积木块，使用步骤
-   （1）将音效文件，存放在 assets/sound/ 目录下
-   （2）在media.json文件的sounds中增加音效的名称，格式如下："sounds":["pop.mp3","接收.mp3"]
-   （3）上传assets/sound/下新增加的音效 和 media.json文件到服务器
+   （1. ）将音效文件，存放在 assets/sound/ 目录下
+   （2. ）在media.json文件的sounds中增加音效的名称，格式如下："sounds":["pop.mp3","接收.mp3"]
+   （3. ）上传assets/sound/下新增加的音效 和 media.json文件到服务器
 
 ### 1.2版本计划 -- 【预计：2021年5月底发布】
 1. 修改svg格式显示的Bug；
@@ -28,7 +28,7 @@ ScratchJr是Scratch官方提供的面向5-7岁儿童，学习Scratch的入门工
 1. 增加“教室或者班级管理”功能
 
 
-与官方保持同步，目前更新到官方2020-9-14版本，这个版本的主要修改：
+## 与官方保持同步，目前更新到官方2020-9-14版本，这个版本的主要修改：
 1. 统一iOS 和 Android与JS交互的接口，具体的见tablet\OS.js
 2. 升级iOS底层，不再使用iOS已经废弃的WebView，使用新的WKWebView。
 3. 增加新的国际化语言
