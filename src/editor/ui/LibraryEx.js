@@ -92,6 +92,8 @@ export default class LibraryEx {
 	}
 
 	static stringListSearch(listValue, seartchWord) {
+		if(listValue == null)
+			return 0;
 		let nRe = 0,
 			nMax = 0;
 		for (let i = 0; i < listValue.length; i++) {

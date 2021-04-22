@@ -112,6 +112,12 @@ export default class Localization {
         return 'String missing: ' + key;
     }
 
+    static isLocalize (key) {
+        if (key in localizationMessages) 
+            return true;
+        return false;
+    }
+
     // Translate a particular message given the message key and info;
     // if key not found, assume it's just a raw text string without a translation,
     // and return that

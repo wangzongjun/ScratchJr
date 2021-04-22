@@ -64,7 +64,9 @@ export default class MediaLib {
 
         // Localize names of backgrounds
         for (let i = 0; i < backgrounds.length; i++) {
-            backgrounds[i].name = Localization.localize('BACKGROUND_' + backgrounds[i].md5);
+            let key = 'BACKGROUND_' + backgrounds[i].md5;
+            if(Localization.isLocalize(key))
+                backgrounds[i].name = Localization.localize();
         }
     }
 
