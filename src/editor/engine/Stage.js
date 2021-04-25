@@ -9,13 +9,23 @@ import Events from '../../utils/Events';
 import ScratchAudio from '../../utils/ScratchAudio';
 import Vector from '../../geom/Vector';
 import Page from './Page';
-import {newHTML, newDiv, gn,
-    getIdFor, setProps,
-    scaleMultiplier, setCanvasSize,
-    globaly, globalx, onTouchStartBind, onTouchMoveBind, onTouchEndBind} from '../../utils/lib';
+import {
+    newHTML,
+    newDiv,
+    gn,
+    getIdFor,
+    setProps,
+    scaleMultiplier,
+    setCanvasSize,
+    globaly,
+    globalx,
+    onTouchStartBind,
+    onTouchMoveBind,
+    onTouchEndBind
+} from '../../utils/lib';
 
 export default class Stage {
-    constructor (div) {
+    constructor(div) {
         this.currentPage = undefined;
         this.div = newHTML('div', 'stage', div);
         this.div.setAttribute('id', 'stage');
@@ -29,7 +39,7 @@ export default class Stage {
         });
         var me = this;
 
-        onTouchStartBind(this.div,function (evt) {
+        onTouchStartBind(this.div, function (evt) {
             me.mouseDown(evt);
         });
         this.div.owner = this;
@@ -44,7 +54,7 @@ export default class Stage {
         };
     }
 
-    setStageScaleAndPosition (scale, x, y) {
+    setStageScaleAndPosition(scale, x, y) {
         this.stageScale = scale;
         setProps(gn('stage').style, {
             webkitTransform: 'translate(' + (-this.width / 2) + 'px, ' + (-this.height / 2) + 'px) ' +
@@ -53,7 +63,7 @@ export default class Stage {
         });
     }
 
-    getPagesID () {
+    getPagesID() {
         var res = [];
         for (var i = 0; i < this.pages.length; i++) {
             res.push(this.pages[i].id);
@@ -61,7 +71,7 @@ export default class Stage {
         return res;
     }
 
-    getPage (id) {
+    getPage(id) {
         for (var i = 0; i < this.pages.length; i++) {
             if (this.pages[i].id == id) {
                 return this.pages[i];
@@ -70,7 +80,7 @@ export default class Stage {
         return this.pages[0];
     }
 
-    resetPage (obj) {
+    resetPage(obj) {
         var page = obj.div;
         for (var i = 0; i < page.childElementCount; i++) {
             var spr = page.childNodes[i].owner;
@@ -83,7 +93,7 @@ export default class Stage {
         }
     }
 
-    resetPages () {
+    resetPages() {
         for (var i = 0; i < ScratchJr.stage.pages.length; i++) {
             Stage.prototype.resetPage(ScratchJr.stage.pages[i]);
         }
@@ -93,7 +103,7 @@ export default class Stage {
     //goto page
 
 
-    gotoPage (n) {
+    gotoPage(n) {
         if (n < 1) {
             return;
         }
@@ -106,7 +116,7 @@ export default class Stage {
         this.setPage(this.pages[n - 1], true);
     }
 
-    setPage (page, isOn) {
+    setPage(page, isOn) {
         ScratchJr.stopStrips();
         var sc = ScratchJr.getSprite() ? gn(ScratchJr.stage.currentPage.currentSpriteName + '_scripts') : undefined;
         if (sc) {
@@ -129,7 +139,7 @@ export default class Stage {
         }
     }
 
-    loadPageThreads () {
+    loadPageThreads() {
         ScratchJr.blur();
         var page = this.currentPage;
         for (var i = 0; i < page.div.childElementCount; i++) {
@@ -154,7 +164,7 @@ export default class Stage {
     //Copy Sprite
     /////////////////////////////////'
 
-    copySprite (el, thumb) {
+    copySprite(el, thumb) {
         ScratchAudio.sndFX('copy.wav');
         Thumbs.overpage(thumb);
         var data = Project.encodeSprite(el.owner);
@@ -195,7 +205,7 @@ export default class Stage {
     //Delete page
 
 
-    deletePage (str, data) {
+    deletePage(str, data) {
         //  reserve a next id to be able to Undo deleting the first page
         ScratchJr.storyStart('Stage.prototype.deletePage'); // Record a change for sample projects in story-starter mode
         var pageid = getIdFor('page');
@@ -240,7 +250,8 @@ export default class Stage {
                 });
             }
         }
-        function refreshPage () {
+
+        function refreshPage() {
             ScratchJr.stage.setViewPage(ScratchJr.stage.currentPage);
             Thumbs.updateSprites();
             Thumbs.updatePages();
@@ -254,13 +265,13 @@ export default class Stage {
         }
     }
 
-    setViewPage (page) {
+    setViewPage(page) {
         this.currentPage = page;
         this.currentPage.div.style.visibility = 'visible';
         this.currentPage.setPageSprites('visible');
     }
 
-    removePageBlocks (str) {
+    removePageBlocks(str) {
         var indx = this.getPagesID().indexOf(str);
         for (var n = 0; n < this.pages.length; n++) {
             var page = this.pages[n];
@@ -298,11 +309,11 @@ export default class Stage {
     //Events MouseDown
 
 
-    mouseDown (e) {
-       /* if (e.touches && (e.touches.length > 1)) {
-            return;
-        }*/
-        
+    mouseDown(e) {
+        /* if (e.touches && (e.touches.length > 1)) {
+             return;
+         }*/
+
         if (ScratchJr.onHold) {
             return;
         }
@@ -342,7 +353,7 @@ export default class Stage {
         }
     }
 
-    checkShaking (pt, target) {
+    checkShaking(pt, target) {
         if (!ScratchJr.shaking) {
             return target;
         }
@@ -354,7 +365,7 @@ export default class Stage {
         return rect.hitRect(pt) ? gn('deletesprite') : target;
     }
 
-    mouseDownOnSprite (spr, pt) {
+    mouseDownOnSprite(spr, pt) {
         this.initialPoint = {
             x: pt.x,
             y: pt.y
@@ -367,7 +378,7 @@ export default class Stage {
         this.setEvents();
     }
 
-    whoIsIt (ctx, pt) {
+    whoIsIt(ctx, pt) {
         var page = this.currentPage.div;
         var spr, pixel;
         for (var i = page.childElementCount - 1; i > -1; i--) {
@@ -378,10 +389,15 @@ export default class Stage {
             if (!spr.shown) {
                 continue;
             }
-            spr.stamp(ctx);
-            pixel = ctx.getImageData(pt.x, pt.y, 1, 1).data;
-            if (pixel[3] != 0) {
-                return spr;
+            if (spr.isPng()) {
+                if (spr.isPtInPng(pt))
+                    return spr;
+            } else {
+                spr.stamp(ctx);
+                pixel = ctx.getImageData(pt.x, pt.y, 1, 1).data;
+                if (pixel[3] != 0) {
+                    return spr;
+                }
             }
         }
         var fuzzy = 5;
@@ -394,20 +410,25 @@ export default class Stage {
             if (!spr.shown) {
                 continue;
             }
-            spr.stamp(ctx);
-            spr.stamp(ctx, fuzzy, 0);
-            spr.stamp(ctx, 0, fuzzy);
-            spr.stamp(ctx, -fuzzy, 0);
-            spr.stamp(ctx, 0, -fuzzy);
-            pixel = ctx.getImageData(pt.x, pt.y, 1, 1).data;
-            if (pixel[3] != 0) {
-                return spr;
+            if (spr.isPng()) {
+                if (spr.isPtInPng(pt))
+                    return spr;
+            } else {
+                spr.stamp(ctx);
+                spr.stamp(ctx, fuzzy, 0);
+                spr.stamp(ctx, 0, fuzzy);
+                spr.stamp(ctx, -fuzzy, 0);
+                spr.stamp(ctx, 0, -fuzzy);
+                pixel = ctx.getImageData(pt.x, pt.y, 1, 1).data;
+                if (pixel[3] != 0) {
+                    return spr;
+                }
             }
         }
         return undefined;
     }
 
-    getStagePt (evt) {
+    getStagePt(evt) {
         var pt = Events.getTargetPoint(evt);
         var mc = this.div;
         var dx = globalx(mc);
@@ -419,17 +440,17 @@ export default class Stage {
         return pt;
     }
 
-    setEvents () {
+    setEvents() {
         var me = this;
-        onTouchMoveBind(window,function (evt) {
+        onTouchMoveBind(window, function (evt) {
             me.mouseMove(evt);
         });
-        onTouchEndBind(window,function (evt) {
+        onTouchEndBind(window, function (evt) {
             me.mouseUp(evt);
         });
     }
 
-    startShaking (b) {
+    startShaking(b) {
         if (!b.owner) {
             return;
         }
@@ -439,7 +460,7 @@ export default class Stage {
         b.owner.startShaking();
     }
 
-    stopShaking (b) {
+    stopShaking(b) {
         if (!b.owner) {
             return;
         }
@@ -448,7 +469,7 @@ export default class Stage {
         ScratchJr.stopShaking = undefined;
     }
 
-    startSpriteDrag () {
+    startSpriteDrag() {
         var spr = Events.dragthumbnail.owner;
         spr.threads = ScratchJr.runtime.removeRunScript(spr);
         this.currentPage.div.appendChild(Events.dragthumbnail);
@@ -460,7 +481,7 @@ export default class Stage {
         ScratchJr.changed = true;
     }
 
-    mouseMove (e) {
+    mouseMove(e) {
         if (!Events.dragthumbnail) {
             return;
         }
@@ -488,7 +509,7 @@ export default class Stage {
         };
     }
 
-    wrapDelta (spr, delta) {
+    wrapDelta(spr, delta) {
         if (spr.type == 'text') {
             return this.wrapText(spr, delta);
         } else {
@@ -496,7 +517,7 @@ export default class Stage {
         }
     }
 
-    wrapChar (spr, delta) {
+    wrapChar(spr, delta) {
         if ((delta.x + spr.xcoor) < 0) {
             delta.x -= (spr.xcoor + delta.x);
         }
@@ -512,7 +533,7 @@ export default class Stage {
         return delta;
     }
 
-    wrapText (spr, delta) {
+    wrapText(spr, delta) {
         var max = spr.cx > 480 ? spr.cx : 480;
         var min = spr.cx > 480 ? 480 - spr.cx : 0;
         if ((delta.x + spr.xcoor) <= min) {
@@ -530,7 +551,7 @@ export default class Stage {
         return delta;
     }
 
-    mouseUp (e) {
+    mouseUp(e) {
         var spr = Events.dragthumbnail.owner;
         if (Events.timeoutEvent) {
             clearTimeout(Events.timeoutEvent);
@@ -550,7 +571,7 @@ export default class Stage {
         Events.dragthumbnail = undefined;
     }
 
-    moveElementBy (spr) {
+    moveElementBy(spr) {
         if (!ScratchJr.inFullscreen) {
             spr.homex = spr.xcoor;
             spr.homey = spr.ycoor;
@@ -559,7 +580,7 @@ export default class Stage {
         Thumbs.updatePages();
     }
 
-    clickOnSprite (e, spr) {
+    clickOnSprite(e, spr) {
         e.preventDefault();
         ScratchJr.clearSelection();
         ScratchJr.startScriptsFor(spr, ['onclick']);
@@ -570,7 +591,7 @@ export default class Stage {
     //Delete Sprite
     /////////////////////////////////'
 
-    removeSprite (sprite) {
+    removeSprite(sprite) {
         ScratchJr.shaking = undefined;
         ScratchJr.stopShaking = undefined;
         ScratchAudio.sndFX('cut.wav');
@@ -583,7 +604,7 @@ export default class Stage {
         this.updatePageBlocks();
     }
 
-    removeCharacter (spr) {
+    removeCharacter(spr) {
         ScratchJr.runtime.stopThreadSprite(spr);
         this.removeFromPage(spr);
         Undo.record({
@@ -595,14 +616,14 @@ export default class Stage {
         Thumbs.updateSprites();
     }
 
-    updatePageBlocks () {
+    updatePageBlocks() {
         for (var i = 0; i < ScratchJr.stage.pages.length; i++) {
             var page = ScratchJr.stage.pages[i];
             ScriptsPane.updateScriptsPageBlocks(JSON.parse(page.sprites));
         }
     }
 
-    removeFromPage (spr) {
+    removeFromPage(spr) {
         var id = spr.id;
         var sc = gn(id + '_scripts');
         var page = this.currentPage;
@@ -627,7 +648,7 @@ export default class Stage {
         }
     }
 
-    renumberPageBlocks (list) {
+    renumberPageBlocks(list) {
         var pages = this.getPagesID();
         for (var n = 0; n < this.pages.length; n++) {
             var page = this.pages[n];
@@ -651,7 +672,7 @@ export default class Stage {
         }
     }
 
-    clickOnElement (e, spr) {
+    clickOnElement(e, spr) {
         if (spr.owner.type == 'text') {
             if (!ScratchJr.inFullscreen) {
                 spr.owner.clickOnText(e);
@@ -665,7 +686,7 @@ export default class Stage {
     //Stage clear
     ///////////////////////////////////////
 
-    clear () {
+    clear() {
         for (var i = 0; i < this.pages.length; i++) {
             this.removePage(this.pages[i]);
         }
@@ -675,7 +696,7 @@ export default class Stage {
         }
     }
 
-    removePage (p) {
+    removePage(p) {
         var list = JSON.parse(p.sprites);
         for (var j = 0; j < list.length; j++) {
             var name = list[j];
@@ -693,45 +714,43 @@ export default class Stage {
     //Debugging hit masks
     ///////////////////////////
 
-    sd () {
+    sd() {
         var stg = gn('stage');
-        var mask = newDiv(gn('stageframe'), stg.offsetLeft + 1, stg.offsetTop + 1, 482, 362,
-            {
-                position: 'absolute',
-                zIndex: ScratchJr.layerTop + 20,
-                visibility: 'hidden'
-            });
+        var mask = newDiv(gn('stageframe'), stg.offsetLeft + 1, stg.offsetTop + 1, 482, 362, {
+            position: 'absolute',
+            zIndex: ScratchJr.layerTop + 20,
+            visibility: 'hidden'
+        });
         mask.setAttribute('id', 'pagemask');
         mask.appendChild(ScratchJr.workingCanvas);
     }
 
-    on () {
+    on() {
         gn('pagemask').style.visibility = 'visible';
     }
 
-    off () {
+    off() {
         gn('pagemask').style.visibility = 'hidden';
     }
 
-    sm (spr) {
+    sm(spr) {
         var stg = gn('stage');
         var w = spr.outline.width;
         var h = spr.outline.height;
-        var mask = newDiv(gn('stageframe'), stg.offsetLeft + 1, stg.offsetTop + 1, w, h,
-            {
-                position: 'absolute',
-                zIndex: ScratchJr.layerTop + 20,
-                visibility: 'hidden'
-            });
+        var mask = newDiv(gn('stageframe'), stg.offsetLeft + 1, stg.offsetTop + 1, w, h, {
+            position: 'absolute',
+            zIndex: ScratchJr.layerTop + 20,
+            visibility: 'hidden'
+        });
         mask.setAttribute('id', 'spritemask');
         mask.appendChild(spr.outline);
     }
 
-    son () {
+    son() {
         gn('spritemask').style.visibility = 'visible';
     }
 
-    soff () {
+    soff() {
         gn('spritemask').style.visibility = 'hidden';
     }
 }
