@@ -134,7 +134,7 @@ export default class Sprite {
             str = str.replace(/>\s*</g, '><');
             spr.setSVG(str);
             IO.getImagesInSVG(str, function () {
-                var base64 = IO.getImageDataURL(spr.md5, btoa(str));
+                var base64 = IO.getImageDataURL(spr.md5, btoa(Sprite.replaceChinese(str)));
                 whenDone(base64);
             });
         }
@@ -1020,12 +1020,18 @@ export default class Sprite {
         setProps(img.style, attr);
     }
 
+    static replaceChinese(str){
+        var reg =/[\u4e00-\u9fa5]/g;
+        var _str = str.replace(reg, "");
+        return _str;
+    }
+
     getSVGimage(svg) {
         var img = document.createElement('img');
         if (this.svg != null) {
             var str = (new XMLSerializer()).serializeToString(svg);
             str = str.replace(/ href="data:image/g, ' xlink:href="data:image');
-            img.src = 'data:image/svg+xml;base64,' + btoa(str);
+            img.src = 'data:image/svg+xml;base64,' + btoa(Sprite.replaceChinese(str));
         } else {
             img.src = this.pngPath();
         }
