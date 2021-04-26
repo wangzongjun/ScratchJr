@@ -58,15 +58,16 @@ export default class MediaLib {
     static localizeMediaNames() {
         // Localize names of sprites
         for (let i = 0; i < sprites.length; i++) {
-            if (sprites[i].order != null)
-                sprites[i].name = Localization.localize('CHARACTER_' + sprites[i].md5);
+            let key = 'CHARACTER_' + sprites[i].md5;
+            if (Localization.isLocalize(key))
+                sprites[i].name = Localization.localize(key);
         }
 
         // Localize names of backgrounds
         for (let i = 0; i < backgrounds.length; i++) {
             let key = 'BACKGROUND_' + backgrounds[i].md5;
-            if(Localization.isLocalize(key))
-                backgrounds[i].name = Localization.localize();
+            if (Localization.isLocalize(key))
+                backgrounds[i].name = Localization.localize(key);
         }
     }
 
