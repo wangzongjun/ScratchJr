@@ -137,7 +137,7 @@ export default class Paint {
     }
 
     static toString(){
-        return "Paint mode:\""+Paint.mode+"\" initialPoint:"+Paint.pointStr(Paint.initialPoint)+",deltaPoint:"+Paint.pointStr(Paint.deltaPoint);
+        return "Paint mode:\""+Paint.mode+"\" currentZoom:"+Paint.currentZoom+" initialPoint:"+Paint.pointStr(Paint.initialPoint)+",deltaPoint:"+Paint.pointStr(Paint.deltaPoint);
     }
 
     static pointStr(pt){
@@ -585,6 +585,7 @@ export default class Paint {
     static layout () {
         Paint.topbar();
         var div = newHTML('div', 'innerpaint', paintFrame);
+        div.setAttribute('id', 'innerpaint');
         Paint.leftPalette(div);
         var workspaceContainer = newHTML('div', 'workspacebkg-container', div);
         var workspace = newHTML('div', 'workspacebkg', workspaceContainer);
