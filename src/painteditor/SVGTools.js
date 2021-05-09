@@ -16,8 +16,7 @@ let attributeTable = {
     'rect': ['x', 'y', 'width', 'height'],
     'circle': ['cx', 'cy', 'r'],
     'line': ['x1', 'y1', 'x2', 'y2'],
-    'text': ['x', 'y', 'font-size', 'font-family', 'font-style', 'font-weight',
-        'text-anchor', 'xml:space'],
+    'text': ['x', 'y', 'font-size', 'font-family', 'font-style', 'font-weight', 'text-anchor', 'xml:space'],
     'polyline': ['points'],
     'polygon': ['points']
 };

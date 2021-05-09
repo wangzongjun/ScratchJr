@@ -136,6 +136,14 @@ export default class Paint {
         deltaPoint = newDeltaPoint;
     }
 
+    static toString(){
+        return "Paint mode:\""+Paint.mode+"\" initialPoint:"+Paint.pointStr(Paint.initialPoint)+",deltaPoint:"+Paint.pointStr(Paint.deltaPoint);
+    }
+
+    static pointStr(pt){
+        return "["+Math.round(pt.x)+","+Math.round(pt.y)+"]";
+    }
+
     ///////////////////////////////////////////
     //Opening and Layout
     ///////////////////////////////////////////

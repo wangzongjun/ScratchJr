@@ -46,6 +46,7 @@ let startAngle = 0;
 let dragging = false;
 let timeoutEvent;
 let mindist = 10;
+let DebugLog = false;
 
 
 //Main Events
@@ -84,6 +85,7 @@ export default class PaintAction {
         if (Path.hitDot(evt)) {
             Paint.mode = 'grab';
         }
+        if(DebugLog)console.log("PaintAction.mouseDown() "+Paint.toString());
         currentShape = undefined;
         PaintAction.clearEvents();
         cmdForMouseDown[Paint.mode](evt);
@@ -152,6 +154,7 @@ export default class PaintAction {
     }
 
     static setEvents () {
+        if(DebugLog)console.log(`PaintAction.setEvents()`);
         onTouchMoveBind(window,function (evt) {
             PaintAction.mouseMove(evt);
         });
@@ -168,11 +171,13 @@ export default class PaintAction {
         evt.preventDefault();
         cmdForMouseMove[Paint.mode](evt);
         Paint.deltaPoint = PaintAction.getScreenPt(evt);
+        if(DebugLog)console.log("PaintAction.mouseMove() "+Paint.toString());
     }
 
     static mouseUp (evt) {
         evt.preventDefault();
         cmdForMouseUp[Paint.mode](evt);
+        if(DebugLog)console.log("PaintAction.mouseUp() "+Paint.toString());
         Ghost.clearLayer();
         if (!dragging) {
             var mt = PaintAction.getMouseTarget(evt);
@@ -513,6 +518,7 @@ export default class PaintAction {
 
     static pathMouseMove (evt) {
         var pt = PaintAction.getScreenPt(evt);
+        console.log(`PaintAction.pathMouseMove() - pt:[${Math.round(pt.x)},${Math.round(pt.y)}]`);
         var delta = Vector.diff(pt, Paint.initialPoint);
         if (!dragging && (Vector.len(delta) > mindist)) {
             dragging = true;
@@ -1119,7 +1125,15 @@ export default class PaintAction {
 
     static getScreenPt (evt) {
         var pt = Events.getTargetPoint(evt);
-        return PaintAction.zoomPt(pt);
+        var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        if(typeof window.webkitConvertPointFromNodeToPage === 'function' || isChrome){
+            return PaintAction.zoomPt(pt);
+        }else{
+            pt.x -= gn('maincanvas').dx / Paint.currentZoom;
+            pt.x -= 38;
+            pt.y -= 8;
+            return PaintAction.zoomPt(pt);
+        }
     }
 
     static zoomPt (pt) {
