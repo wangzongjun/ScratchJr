@@ -531,7 +531,7 @@ export default class PaintAction {
 
     static pathMouseMove(evt) {
         var pt = PaintAction.getScreenPt(evt);
-        console.log(`PaintAction.pathMouseMove() - pt:[${Math.round(pt.x)},${Math.round(pt.y)}]`);
+        if(DebugLog)console.log(`PaintAction.pathMouseMove() - pt:[${Math.round(pt.x)},${Math.round(pt.y)}]`);
         var delta = Vector.diff(pt, Paint.initialPoint);
         if (!dragging && (Vector.len(delta) > mindist)) {
             dragging = true;
