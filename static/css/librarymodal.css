@@ -6,7 +6,8 @@
     background: url('../assets/libbkg.png');
     background-size: 100%;
     display: none;
-    width: ${css_vw(100)};
+    /* width: ${css_vw(100)}; */
+    width: 100%;
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
     -webkit-user-select: none;
@@ -145,16 +146,16 @@ Assets chooser
     margin: ${css_vh(0.00)};
     margin-left: auto;
     margin-right: auto;
-    height: ${css_vh(88.28)};
-    overflow-y: scroll;
+    /* height: ${css_vh(88.28)}; */
+    /* overflow-y: scroll; */
 }
 
 *.scrollarea{
     position: relative;
     padding: ${css_vh(0.00)};
     margin: ${css_vh(0.00)} auto;
-    width: ${css_vw(92.77)};
-
+    /* width: ${css_vw(92.77)}; */
+    width: 100%;
 }
 
 hr.bigdivide{

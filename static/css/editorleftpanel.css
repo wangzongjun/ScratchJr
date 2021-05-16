@@ -40,7 +40,8 @@
 
 .scrollbar.off { display: none;}
 
-.scrollbar.on {display: inline-block;}
+/* .scrollbar.on {display: inline-block;} */
+.scrollbar.on {display: none;}
 
 #library {
     position: absolute;
@@ -49,7 +50,7 @@
     padding: 0px;
     top: ${css_vh(9.38)};
     width: ${css_vh(33.85)};
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
 }
 
 #library .spritethumbs {
@@ -57,21 +58,22 @@
     margin: 0px;
     padding: 0px;
     display: block;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: hidden;
     width: ${css_vh(33.85)};
     max-height: ${css_vh(40.63)};
+    margin-left:${css_vh(2.34)};
 }
 
-.spritethumbs::-webkit-scrollbar {
-    width: 0 !important;
-}
+/* .spritethumbs::-webkit-scrollbar {
+    width: 2px !important;
+} */
 
 #library .spritethumbs .spritecc{
     position: relative;
-    margin: 0px ${css_vh(2.34)} 0px;
     padding: 0px;
-    width:  ${css_vh(29.95)};
+    width: ${css_vh(33.85)};
+    height: ${css_vh(40.63)};
+    overflow-y: auto;
 }
 
 #library .addsprite {
