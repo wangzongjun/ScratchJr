@@ -682,7 +682,7 @@ img.infoboxShareLoading {
 
 .infobox.fade {
     /*  -webkit-transition: top .2s linear, left .2s ease-out;*/
-    top: ${css_vh(-100)};
+    top: -100%;
     left: ${css_vh(133.33)};
 }
 
