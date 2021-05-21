@@ -59,7 +59,8 @@ export default class Web {
     }
 
     static io_setmedianame(contents, key, ext, fcn) {
-        WebUtils.log("Web.io_setmedianame({0},{1},{2})".format(contents, key, ext));
+        if (window.Settings.enableLog)
+            WebUtils.log("Web.io_setmedianame({0},{1},{2})".format(contents, key, ext));
         let md5 = "{0}.{1}".format(key, ext);
         Database._writeToURL(md5, contents, fcn);
     }
