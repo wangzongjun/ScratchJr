@@ -503,11 +503,14 @@ export default class Paint {
 
     static setCanvasTransform (value) {
         if (isAndroid) { // Use 3D translate to increase speed
-            gn('maincanvas').style.webkitTransform = 'translate3d(' + gn('maincanvas').dx + 'px,'
-                + gn('maincanvas').dy + 'px, 0px) scale(' + value + ',' + value + ')';
+            // gn('maincanvas').style.webkitTransform = 'translate3d(' + gn('maincanvas').dx + 'px,'
+            //     + gn('maincanvas').dy + 'px, 0px) scale(' + value + ',' + value + ')';
+            gn('maincanvas').style.webkitTransform = 'translate3d(-50%,-50%, 0px) scale(' + value + ',' + value + ')';
         } else { // Use 2D translate to maintain sharpness
-            gn('maincanvas').style.webkitTransform = 'translate(' + gn('maincanvas').dx + 'px,'
-                + gn('maincanvas').dy + 'px) scale(' + value + ',' + value + ')';
+            // gn('maincanvas').style.webkitTransform = 'translate(' + gn('maincanvas').dx + 'px,'
+            //     + gn('maincanvas').dy + 'px) scale(' + value + ',' + value + ')';
+            gn('maincanvas').style.webkitTransform = 'translate(-50%,-50%) scale(' + value + ',' + value + ')';
+
 
         }
     }
@@ -866,8 +869,9 @@ export default class Paint {
 
         var div = gn('maincanvas');
         div.style.background = '#F5F2F7';
-        div.style.top = '0px';
-        div.style.left = '0px';
+        div.style.position = 'absolute';
+        div.style.top = '50%';
+        div.style.left = '50%';
 
         div.style.width = w + 'px';
         div.style.height = h + 'px';
@@ -1001,8 +1005,9 @@ export default class Paint {
         var div = newHTML('div', 'maincanvas', container);
         div.setAttribute('id', 'maincanvas');
         div.style.background = '#F5F2F7';
-        div.style.top = '0px';
-        div.style.left = '0px';
+        div.style.position = 'absolute';
+        div.style.top = '50%';
+        div.style.left = '50%';
         onTouchMoveBind(window,undefined);
         onTouchEndBind(window,undefined);
         root = SVGTools.create(div);

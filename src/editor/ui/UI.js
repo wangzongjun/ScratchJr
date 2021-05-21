@@ -646,7 +646,7 @@ export default class UI {
         if (dy > 0) {
             dy = 0;
         }
-        sc.style.top = dy + 'px';
+        // sc.style.top = dy + 'px';
         UI.needsScroll();
     }
 
@@ -745,7 +745,7 @@ export default class UI {
         if ((dy + sc.offsetHeight) < p.offsetHeight) {
             dy = p.offsetHeight - sc.offsetHeight;
         }
-        sc.style.top = dy + 'px';
+        // sc.style.top = dy + 'px';
         UI.updateSpriteScroll();
     }
 

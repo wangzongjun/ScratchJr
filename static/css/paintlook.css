@@ -4,7 +4,7 @@
     background: url('../assets/pagebkg.png');
     background-size: 100%;
     display: none;
-    width: ${css_vw(100)};
+    width: 100%;
     height: ${css_vh(100)};
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -67,7 +67,7 @@ spriteform.off {visibility: hidden; };
     position: absolute;
     padding: ${css_vh(0.00)};
     margin: ${css_vh(0.00)};
-    width: ${css_vw(100)};
+    width: 100%;
     height: ${css_vh(8.33)};
 }
 
@@ -254,7 +254,7 @@ spriteform.off {visibility: hidden; };
     top: ${css_vh(8.33)};
     padding: ${css_vh(0.00)};
     margin: ${css_vh(0.00)};
-    width: ${css_vw(100)};
+    width: 100%;
     height: ${css_vh(76.56)};
 }
 
