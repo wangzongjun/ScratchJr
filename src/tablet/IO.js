@@ -4,6 +4,7 @@ import JSZip from 'jszip';
 import {setCanvasSize, drawThumbnail, gn} from '../utils/lib';
 import Lobby from '../lobby/Lobby';
 import SVG2Canvas from '../utils/SVG2Canvas';
+import localforage from 'localforage';
 
 const database = 'projects';
 const collectLibraryAssets = true; //保存素材库资源
@@ -635,10 +636,23 @@ export default class IO {
 
             if (subFolder == 'thumbnails' || subFolder == 'sounds') {
                 // Save these immediately to the filesystem - no additional processing necessary
+                if (subFolder == 'sounds') {
+                  var bstr = atob(b2data); //atob()方法将数据解码
+                  var leng = bstr.length;
+                  var u8arr = new Uint8Array(leng);
+                  while (leng--) {
+                    u8arr[leng] = bstr.charCodeAt(leng); //返回指定位置的字符的 Unicode 编码
+                  }
+                  // var blob2 = new Blob([u8arr], { type: 'audio/wav; codecs=opus' });
+                  var blob2 = new Blob([u8arr], {
+                    type: 'audio/' + ext + '; codecs=opus',
+                  });
+                  localforage.setItem(fullName, blob2);
+                }
                 OS.setmedianame(b2data, name, ext, function () {
-                    saveActual++;
+                  saveActual++;
                 });
-            } else if (subFolder == 'characters') {
+              } else if (subFolder == 'characters') {
                 // This code is messy - needs a refactor sometime for all the database calls/duplication for bkgs...
 
                 // Save the character, generate its thumbnail, and add entry to the database
