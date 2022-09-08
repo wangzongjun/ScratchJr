@@ -45,7 +45,7 @@
     "file-saver": "^2.0.2",
     "intl": "^1.0.1",
     "intl-messageformat": "^1.2.0",
-    "jszip": "^2.5.0",
+    "jszip": "^2.7.0",
     "snapsvg": "^0.3.0"
   }
 }
