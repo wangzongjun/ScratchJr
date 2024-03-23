@@ -9,6 +9,7 @@ import OS from '../../tablet/OS';
 import IO from '../../tablet/IO';
 import Paint from '../../painteditor/Paint';
 import SVG2Canvas from '../../utils/SVG2Canvas';
+import Localization from '../../utils/Localization';
 import {frame, gn, newHTML, scaleMultiplier, getIdFor,
     isAndroid, setProps, setCanvasSize} from '../../utils/lib';
 
@@ -429,7 +430,7 @@ export default class Project {
             Alert.open(frame, gn('flip'), 'Waiting', '#28A5DA');
             Project.waitUntilSaved(id, whenDone);
         } else {
-            Alert.open(frame, gn('flip'), 'Saving', '#28A5DA');
+            Alert.open(frame, gn('flip'), Localization.localize('ALERT_SAVING'), '#28A5DA');
             Project.save(id, whenDone);
         }
     }
