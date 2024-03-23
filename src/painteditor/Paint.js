@@ -1318,7 +1318,7 @@ export default class Paint {
         if (worthsaving) {
             saving = true;
             if (fcn) {
-                Alert.open(paintFrame, gn('donecheck'), 'Saving...', '#28A5DA');
+                Alert.open(paintFrame, gn('donecheck'), Localization.localize('ALERT_SAVING'), '#28A5DA');
                 Alert.balloon.style.zIndex = 12000;
             }
             svgdata = SVGTools.saveShape(gn('layer1'), workspaceWidth, workspaceHeight);
