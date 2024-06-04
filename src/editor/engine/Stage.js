@@ -349,7 +349,7 @@ export default class Stage {
         if (ScratchJr.shaking) {
             ScratchJr.clearSelection();
         } else {
-            this.mouseDownOnSprite(hitobj, pt);
+            this.mouseDownOnSprite(hitobj, pt ,e);
         }
     }
 
@@ -365,7 +365,7 @@ export default class Stage {
         return rect.hitRect(pt) ? gn('deletesprite') : target;
     }
 
-    mouseDownOnSprite(spr, pt) {
+    mouseDownOnSprite(spr, pt, e) {
         this.initialPoint = {
             x: pt.x,
             y: pt.y
@@ -373,7 +373,7 @@ export default class Stage {
         Events.dragthumbnail = spr.div;
         Events.clearEvents();
         if (!ScratchJr.inFullscreen && ScratchJr.isEditable()) {
-            Events.holdit(spr.div, this.startShaking);
+            Events.holdit(spr.div, this.startShaking, e);
         }
         this.setEvents();
     }

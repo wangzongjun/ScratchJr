@@ -115,7 +115,7 @@ export default class Events {
         fcnclick = atclick;
 
         if (athold) {
-            Events.holdit(c, athold);
+            Events.holdit(c, athold, e);
         }
         updatefcn = atdrag;
         if (isTablet) { // startDrag event setting
@@ -143,13 +143,13 @@ export default class Events {
         }
     }
 
-    static holdit (c, fcn) {
+    static holdit (c, fcn, e) {
         var repeat = function () {
             Events.clearEvents();
             fcn(dragthumbnail);
             Events.clearDragAndDrop();
         };
-        timeoutEvent = setTimeout(repeat, 500);
+        timeoutEvent = setTimeout(repeat, e.button==2?0:500);
     }
 
     static clearDragAndDrop () {
